@@ -2,105 +2,116 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<title>MORFEO · iPhone Planner</title>
+<meta name="apple-mobile-web-app-title" content="MORFEO" />
+<title>MORFEO · Planner</title>
 <style>
   :root {
-    --bg: #f2f2f7;
+    --bg: #f5f5f7;
     --surface: #ffffff;
-    --surface-soft: #f9f9fb;
-    --text: #1c1c1e;
+    --surface-soft: #fafafa;
+    --text: #1d1d1f;
     --text-muted: #6e6e73;
-    --border: #d1d1d6;
-    --border-strong: #8e8e93;
-    --accent: #007aff;
-    --accent-soft: #eaf3ff;
+    --border: #d2d2d7;
+    --border-strong: #86868b;
+    --accent: #0071e3;
+    --accent-soft: #e8f2fc;
     --bb-bg: #eef2ff;
     --bb-text: #3730a3;
+    --bb-border: #c7d2fe;
     --sh-bg: #fff7ed;
     --sh-text: #9a3412;
+    --sh-border: #fed7aa;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
+  body {
     margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow-x: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
   }
 
   .app {
-    width: 100%;
-    max-width: 480px;
+    max-width: 680px;
     margin: 0 auto;
-    padding: calc(10px + env(safe-area-inset-top)) 10px calc(28px + env(safe-area-inset-bottom));
+    padding: 12px 14px 32px;
   }
 
-  /* Header iPhone */
   .topbar {
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 13px;
-    margin-bottom: 10px;
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
   }
-  .title-area { flex: 1; min-width: 0; }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .app-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: linear-gradient(145deg, #1d1e52, #0f172a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.25);
+  }
+
   h1#studyTitle {
     margin: 0;
     font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    line-height: 1.2;
+    cursor: pointer;
   }
   p#studySubtitle {
-    margin: 3px 0 0;
-    font-size: 11.5px;
+    margin: 2px 0 0;
+    font-size: 12px;
     color: var(--text-muted);
-    line-height: 1.3;
-  }
-  .inline-edit-input {
-    width: 100%;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 700;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    padding: 4px 7px;
+    cursor: pointer;
   }
 
-  .header-stack {
+  .header-actions {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    align-items: stretch;
     flex-shrink: 0;
   }
 
   .btn {
-    min-height: 36px;
     border: 1.5px solid var(--border);
     background: var(--surface);
     color: var(--text);
     font-family: inherit;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 600;
-    padding: 6px 11px;
+    padding: 8px 12px;
     border-radius: 10px;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
-    cursor: pointer;
     white-space: nowrap;
   }
   .btn-primary {
@@ -108,162 +119,202 @@
     border-color: var(--accent);
     color: #fff;
   }
-  .btn-sm { min-height: 32px; padding: 4px 9px; font-size: 12px; border-radius: 8px; }
-  .btn-danger { color: #ff3b30; border-color: #ffb4af; }
+  .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+  .btn-danger { color: #d93025; border-color: #f3b7b3; }
 
-  /* File Utili iPhone Dropdown */
   .files-dropdown {
     display: none;
     background: var(--surface);
     border: 1.5px solid var(--border-strong);
-    border-radius: 14px;
-    padding: 12px;
-    margin-bottom: 10px;
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   }
   .files-dropdown.open { display: block; }
-  .file-item {
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 8px;
-    background: var(--surface-soft);
+  .files-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .file-item:last-child { margin-bottom: 0; }
-  .file-item label {
-    display: block;
-    font-size: 11px;
+  .file-card {
+    background: var(--surface-soft);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .file-card label {
+    font-size: 11.5px;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 5px;
   }
-  .file-item input, .file-item textarea {
+  .file-card input, .file-card textarea {
     width: 100%;
-    font-size: 15px;
-    font-family: inherit;
     border: 1.5px solid var(--border);
     border-radius: 8px;
-    padding: 8px 9px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
     background: #fff;
+    color: var(--text);
   }
-  .file-row-btns {
-    display: flex;
-    gap: 6px;
-    margin-top: 6px;
-    justify-content: flex-end;
-  }
+  .file-card-actions { display: flex; gap: 6px; justify-content: flex-end; }
 
-  /* Soggetti Reclutati iPhone */
-  .subjects-box {
+  .subjects-section {
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 10px 11px;
-    margin-bottom: 10px;
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
   }
-  .sec-header {
+  .section-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
   }
-  .sec-label {
-    font-size: 11px;
+  .section-title {
+    font-size: 11.5px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--text-muted);
   }
-  .subjects-scroll {
+  .legend-inline {
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 3px;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    align-items: center;
   }
-  .subjects-scroll::-webkit-scrollbar { display: none; }
+  .legend-box-dashed {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px dashed var(--accent);
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+  .legend-box-solid {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
 
-  .all-card-mobile {
-    min-width: 128px;
+  .subjects-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .all-subjects-card {
+    min-width: 145px;
     background: var(--surface-soft);
     border: 1.5px solid var(--border);
-    border-radius: 11px;
-    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     flex-shrink: 0;
   }
-  .all-card-mobile.active { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .all-subjects-card.active-filter { border: 2px solid var(--accent); background: var(--accent-soft); }
 
-  .subj-card-mobile {
-    min-width: 172px;
-    max-width: 185px;
+  .subject-card {
+    min-width: 205px;
+    max-width: 225px;
     background: #fff;
     border: 1.5px solid var(--border);
-    border-left-width: 4px;
-    border-radius: 11px;
-    padding: 8px 10px;
-    flex-shrink: 0;
+    border-left-width: 5px;
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
+    flex-shrink: 0;
   }
-  .subj-card-mobile.selected { box-shadow: 0 0 0 2px var(--accent); background: #f7fbff; }
+  .subject-card.selected {
+    background: #f8fbff;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
 
-  .code-chip {
-    font-size: 10px;
-    font-weight: 800;
-    color: #fff;
-    padding: 1px 6px;
-    border-radius: 5px;
+  .subj-code-pill {
     display: inline-block;
-  }
-  .m-subj-name {
-    font-size: 13px;
+    font-size: 10.5px;
     font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 2px 6px;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 2px;
   }
-  .m-cond-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .subj-name { font-size: 13.5px; font-weight: 700; line-height: 1.2; }
+  .subj-progress {
     font-size: 11px;
-    background: var(--surface-soft);
-    border: 1px solid #e5e5ea;
-    border-radius: 6px;
-    padding: 3px 6px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: #f2f2f7;
+    padding: 2px 6px;
+    border-radius: 5px;
   }
-  .tag-bb { background: var(--bb-bg); color: var(--bb-text); font-weight: 700; padding: 1px 5px; border-radius: 4px; }
-  .tag-sh { background: var(--sh-bg); color: var(--sh-text); font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+  .cond-stack { display: flex; flex-direction: column; gap: 3px; }
+  .cond-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+  }
+  .cond-tag { font-weight: 700; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; }
+  .cond-bb { background: var(--bb-bg); color: var(--bb-text); border: 1px solid var(--bb-border); }
+  .cond-sh { background: var(--sh-bg); color: var(--sh-text); border: 1px solid var(--sh-border); }
 
-  /* Calendar iPhone Grid */
-  .cal-card {
+  .calendar-card {
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 10px 8px 12px;
+    border-radius: var(--radius);
+    padding: 12px 10px 16px;
+    box-shadow: var(--shadow);
   }
-  .cal-bar {
+  .cal-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 4px 10px;
+    margin-bottom: 10px;
+    gap: 6px;
+    padding: 0 4px;
   }
-  .cal-title {
+  .cal-month-title {
     font-size: 16px;
     font-weight: 700;
     text-transform: capitalize;
   }
-  .weekdays-7 {
+  .cal-nav { display: flex; gap: 4px; }
+
+  .weekdays {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 3px;
-    margin-bottom: 4px;
+    gap: 4px;
+    margin-bottom: 6px;
   }
-  .wd {
+  .weekday {
     text-align: center;
     font-size: 10.5px;
     font-weight: 700;
@@ -271,387 +322,384 @@
     text-transform: uppercase;
   }
 
-  .grid-7 {
+  .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 3px;
+    gap: 4px;
   }
 
-  .m-cell {
-    min-height: 66px;
+  .day-cell {
+    min-height: 68px;
     background: #fff;
     border: 1.5px solid #e5e5ea;
     border-radius: 8px;
-    padding: 3px 3px 4px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    cursor: pointer;
     overflow: hidden;
   }
-  .m-cell.other { opacity: 0.45; background: #fafafa; }
-  .m-cell.today .m-num {
+  .day-cell.other-month { background: #fafafa; opacity: 0.45; }
+  .day-cell.today .day-num {
     background: var(--accent);
     color: #fff;
     border-radius: 999px;
-    padding: 0 5px;
+    padding: 1px 5px;
   }
-  .m-cell-top {
+  .day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 700;
   }
-  .m-pill {
-    font-size: 9px;
+  .session-dot-top {
+    font-size: 8px;
+    font-weight: 800;
+    background: rgba(255,255,255,0.9);
+    color: #1d1d1f;
+    padding: 0 3px;
+    border-radius: 3px;
+  }
+  .ev-badge {
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 2px 3px;
+    padding: 2px 4px;
     border-radius: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.15;
   }
-  .m-pill-diary {
-    background: rgba(255,255,255,0.92);
+  .ev-diary {
+    background: rgba(255,255,255,0.94);
     border: 1px dashed currentColor;
   }
-  .m-pill-sess {
+  .ev-session {
     background: rgba(255,255,255,0.96);
-    color: #1c1c1e !important;
-    font-weight: 800;
+    color: #1d1d1f !important;
   }
 
-  /* iOS Bottom Sheet Modals */
-  .sheet-backdrop {
+  .modal-backdrop {
     display: none;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(3px);
     z-index: 1000;
     align-items: flex-end;
     justify-content: center;
   }
-  .sheet-backdrop.open { display: flex; }
+  .modal-backdrop.open { display: flex; }
 
-  .bottom-sheet {
-    width: 100%;
-    max-width: 480px;
+  .modal-box {
     background: #fff;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    padding: 10px 16px calc(22px + env(safe-area-inset-bottom));
-    max-height: 88vh;
+    border-radius: 18px 18px 0 0;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.18);
-    animation: slideUp 0.22s ease-out;
+    padding: 18px 16px calc(24px + env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
   }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-  .sheet-grabber {
-    width: 38px;
-    height: 4px;
-    background: #d1d1d6;
-    border-radius: 999px;
-    margin: 0 auto 10px;
-  }
-  .sheet-head {
+  .modal-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
     border-bottom: 1px solid #ececef;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
   }
-  .sheet-head h3 { margin: 0; font-size: 16px; }
-  .x-btn {
+  .modal-head h3 { margin: 0; font-size: 16px; }
+  .close-btn {
+    background: #f2f2f7;
+    border: none;
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    border: none;
-    background: #f2f2f7;
     font-size: 15px;
-    font-weight: 700;
+    cursor: pointer;
+    color: var(--text);
   }
 
-  .f-group {
+  .form-group {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 11px;
   }
-  .f-row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .f-group label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-  .f-group input, .f-group select, .f-group textarea {
-    width: 100%;
-    font-size: 16px;
-    font-family: inherit;
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  .form-group input, .form-group select, .form-group textarea {
     border: 1.5px solid var(--border);
-    border-radius: 10px;
+    border-radius: 9px;
     padding: 9px 10px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
     background: #fff;
   }
 
-  .swatches-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .sw-dot {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2.5px solid transparent;
-  }
-  .sw-dot.active { border-color: #1c1c1e; transform: scale(1.08); }
+  .color-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; }
+  .swatch.active { border-color: #1d1d1f; transform: scale(1.1); }
 
-  /* Session Essential Card */
-  .sess-box {
+  .session-clean-box {
     border: 1.5px solid var(--border);
-    border-left-width: 5px;
+    border-left-width: 6px;
     border-radius: 12px;
-    padding: 12px;
+    padding: 13px;
     background: var(--surface-soft);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
-  .wa-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    width: 100%;
-    min-height: 42px;
+  .btn-whatsapp {
     background: #25d366;
     color: #fff;
     font-weight: 700;
-    font-size: 14px;
-    border-radius: 10px;
     text-decoration: none;
-    margin: 10px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 13px;
+    margin: 8px 0 10px;
   }
-
-  /* Diary Box */
-  .diary-card {
+  .diary-block {
     border: 1.5px dashed var(--border-strong);
     border-radius: 12px;
     padding: 12px;
     background: #fff;
+    margin-bottom: 12px;
   }
-  .chk-line {
+  .check-row {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 7px 0;
-    font-size: 14px;
+    gap: 8px;
+    font-size: 13.5px;
     font-weight: 600;
+    padding: 5px 0;
   }
-  .chk-line input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .check-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+  .reminder-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ececef; }
+  .reminder-controls { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .reminder-controls select, .reminder-controls input[type="time"] {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 8px;
+    font-family: inherit;
+    font-size: 13px;
+    background: #fff;
+  }
 
-  /* Alarm Banner */
-  .alarm-banner {
+  .all-subj-item {
+    border: 1.5px solid var(--border);
+    border-left-width: 5px;
+    border-radius: 11px;
+    padding: 11px 12px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .status-pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .status-done { background: #dcfce7; color: #166534; }
+  .status-active { background: #dbeafe; color: #1e40af; }
+
+  .alarm-popup {
     display: none;
     position: fixed;
-    top: calc(12px + env(safe-area-inset-top));
-    left: 10px;
-    right: 10px;
-    max-width: 460px;
-    margin: 0 auto;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    left: 14px;
+    right: 14px;
     background: #fff;
     border: 2px solid var(--accent);
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    border-radius: 15px;
+    padding: 14px 16px;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.2);
     z-index: 2000;
   }
-  .alarm-banner.open { display: block; }
+  .alarm-popup.open { display: block; }
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- HEADER -->
   <header class="topbar">
-    <div class="title-area">
-      <h1 id="studyTitle">MORFEO · Thesis Planner ✏️</h1>
-      <p id="studySubtitle">Tocca per personalizzare · Sessioni & Diari</p>
+    <div class="brand-row">
+      <div class="app-icon-badge" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <path d="M18.5 6.2A8.5 8.5 0 1 0 22.2 18.8 7 7 0 0 1 18.5 6.2Z" fill="#fbbf24"/>
+          <path d="M4 18.5H8.5L10.5 14.5L13 22L15.5 16.5L17.5 18.5H24" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1 id="studyTitle" title="Tocca per rinominare">MORFEO · Planner ✏️</h1>
+        <p id="studySubtitle" title="Tocca per modificare">Sessioni & Diari</p>
+      </div>
     </div>
-    <div class="header-stack">
-      <button class="btn btn-primary" id="btnNewSubject">+ Nuovo Soggetto</button>
-      <button class="btn" id="btnToggleFiles">📁 File Utili ▾</button>
+
+    <div class="header-actions">
+      <button class="btn btn-primary btn-sm" id="btnNewSubject">+ Nuovo Soggetto</button>
+      <button class="btn btn-sm" id="btnToggleFiles">📁 File Utili ▾</button>
     </div>
   </header>
 
-  <!-- FILE UTILI -->
   <section class="files-dropdown" id="filesDropdown">
-    <div class="file-item">
-      <label>1. Link Diario del Sonno</label>
-      <input type="url" id="linkDiaryInput" placeholder="https://..." />
-      <div class="file-row-btns">
-        <button class="btn btn-sm" onclick="copyField('linkDiaryInput')">Copia</button>
-        <button class="btn btn-sm" onclick="openUrlField('linkDiaryInput')">Apri ↗</button>
+    <div class="files-grid">
+      <div class="file-card">
+        <label for="linkDiaryInput">1. Link Diario del Sonno</label>
+        <input type="url" id="linkDiaryInput" placeholder="https://forms.gle/..." />
+        <div class="file-card-actions">
+          <button class="btn btn-sm" onclick="copyField('linkDiaryInput')">Copia</button>
+          <button class="btn btn-sm" onclick="openUrlField('linkDiaryInput')">Apri ↗</button>
+        </div>
       </div>
-    </div>
-    <div class="file-item">
-      <label>2. Link Questionario Reclutamento</label>
-      <input type="url" id="linkRecruitInput" placeholder="https://..." />
-      <div class="file-row-btns">
-        <button class="btn btn-sm" onclick="copyField('linkRecruitInput')">Copia</button>
-        <button class="btn btn-sm" onclick="openUrlField('linkRecruitInput')">Apri ↗</button>
+      <div class="file-card">
+        <label for="linkRecruitInput">2. Link Questionario Reclutamento</label>
+        <input type="url" id="linkRecruitInput" placeholder="https://forms.gle/..." />
+        <div class="file-card-actions">
+          <button class="btn btn-sm" onclick="copyField('linkRecruitInput')">Copia</button>
+          <button class="btn btn-sm" onclick="openUrlField('linkRecruitInput')">Apri ↗</button>
+        </div>
       </div>
-    </div>
-    <div class="file-item">
-      <label>3. Note · Testo messaggi</label>
-      <textarea id="msgNotesInput" rows="2" placeholder="Testo messaggio (usa {LINK} per il diario)..."></textarea>
-      <div class="file-row-btns">
-        <button class="btn btn-sm" onclick="copyMessageTemplate()">Copia messaggio</button>
+      <div class="file-card">
+        <label for="msgNotesInput">3. Testo Messaggio Partecipanti</label>
+        <textarea id="msgNotesInput" placeholder="Messaggio standard (usa {LINK} per il link diario)..."></textarea>
+        <div class="file-card-actions">
+          <button class="btn btn-sm" onclick="copyMessageTemplate()">Copia messaggio</button>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SOGGETTI RECLUTATI -->
-  <section class="subjects-box">
-    <div class="sec-header">
-      <span class="sec-label">Soggetti Reclutati</span>
-      <span style="font-size:10.5px; color:var(--text-muted);">┄ Diario · █ Sessione</span>
+  <section class="subjects-section">
+    <div class="section-head">
+      <span class="section-title">Soggetti Reclutati</span>
+      <div class="legend-inline">
+        <span><i class="legend-box-dashed"></i>Diario</span>
+        <span><i class="legend-box-solid"></i>Sessione</span>
+      </div>
     </div>
-    <div class="subjects-scroll" id="subjectsStrip"></div>
+    <div class="subjects-strip" id="subjectsStrip"></div>
   </section>
 
-  <!-- CALENDARIO -->
-  <section class="cal-card">
-    <div class="cal-bar">
-      <div class="cal-title" id="calMonthTitle"></div>
-      <div style="display:flex; gap:5px;">
+  <section class="calendar-card">
+    <div class="cal-toolbar">
+      <div class="cal-month-title" id="calMonthTitle"></div>
+      <div class="cal-nav">
         <button class="btn btn-sm" id="btnPrevMonth">◀</button>
         <button class="btn btn-sm" id="btnToday">Oggi</button>
         <button class="btn btn-sm" id="btnNextMonth">▶</button>
       </div>
     </div>
-    <div class="weekdays-7">
-      <div class="wd">Lun</div>
-      <div class="wd">Mar</div>
-      <div class="wd">Mer</div>
-      <div class="wd">Gio</div>
-      <div class="wd">Ven</div>
-      <div class="wd">Sab</div>
-      <div class="wd">Dom</div>
+    <div class="weekdays">
+      <div class="weekday">Lun</div>
+      <div class="weekday">Mar</div>
+      <div class="weekday">Mer</div>
+      <div class="weekday">Gio</div>
+      <div class="weekday">Ven</div>
+      <div class="weekday">Sab</div>
+      <div class="weekday">Dom</div>
     </div>
-    <div class="grid-7" id="calGrid"></div>
+    <div class="cal-grid" id="calGrid"></div>
   </section>
 </div>
 
-<!-- BOTTOM SHEET: NUOVO / MODIFICA SOGGETTO -->
-<div class="sheet-backdrop" id="subjectModal">
-  <div class="bottom-sheet">
-    <div class="sheet-grabber"></div>
-    <div class="sheet-head">
+<div class="modal-backdrop" id="subjectModal">
+  <div class="modal-box">
+    <div class="modal-head">
       <h3 id="subjectModalTitle">Nuovo Soggetto</h3>
-      <button class="x-btn" onclick="closeModal('subjectModal')">✕</button>
+      <button class="close-btn" onclick="closeModal('subjectModal')">✕</button>
     </div>
     <form id="subjectForm">
       <input type="hidden" id="editSubjectId" />
-      <div class="f-row-2">
-        <div class="f-group">
-          <label>N. Soggetto *</label>
-          <input type="text" id="subjCode" placeholder="S01" required />
-        </div>
-        <div class="f-group">
-          <label>Nome e Cognome *</label>
-          <input type="text" id="subjName" placeholder="Marco Rossi" required />
-        </div>
+      <div class="form-group">
+        <label for="subjCode">N. Soggetto *</label>
+        <input type="text" id="subjCode" placeholder="Es. S01" required />
       </div>
-      <div class="f-group">
-        <label>Numero di cellulare (WhatsApp)</label>
-        <input type="tel" id="subjPhone" placeholder="+39 333 1234567" />
+      <div class="form-group">
+        <label for="subjName">Nome e Cognome *</label>
+        <input type="text" id="subjName" placeholder="Es. Marco Rossi" required />
       </div>
-      <div class="f-row-2">
-        <div class="f-group">
-          <label>Data Sessione 1 (S1)</label>
-          <input type="date" id="s1Date" required />
+      <div class="form-group">
+        <label for="subjPhone">Numero di cellulare (WhatsApp)</label>
+        <input type="tel" id="subjPhone" placeholder="Es. +39 333 1234567" />
+      </div>
+      <div class="form-group">
+        <label for="s1Date">Data Sessione 1 (S1)</label>
+        <input type="date" id="s1Date" required />
+      </div>
+      <div class="form-group">
+        <label for="s1Cond">Condizione S1</label>
+        <select id="s1Cond">
+          <option value="BB">BB (Binaural Beats)</option>
+          <option value="SH">SH (Sham)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="s2Date">Data Sessione 2 (S2)</label>
+        <input type="date" id="s2Date" />
+      </div>
+      <div class="form-group">
+        <label for="s2Cond">Condizione S2</label>
+        <select id="s2Cond">
+          <option value="SH">SH (Sham)</option>
+          <option value="BB">BB (Binaural Beats)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Colore identificativo</label>
+        <div class="color-swatches" id="colorSwatches"></div>
+      </div>
+      <div class="form-group">
+        <label for="subjNotes">Note sul soggetto</label>
+        <textarea id="subjNotes" rows="2" placeholder="Orari, contatti, note..."></textarea>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:8px; margin-top:8px;">
+        <button type="button" class="btn btn-danger btn-sm" id="btnDeleteSubject" style="display:none;">Elimina</button>
+        <div style="display:flex; gap:8px; margin-left:auto;">
+          <button type="button" class="btn btn-sm" onclick="closeModal('subjectModal')">Annulla</button>
+          <button type="submit" class="btn btn-primary btn-sm">Salva</button>
         </div>
-        <div class="f-group">
-          <label>Condizione S1</label>
-          <select id="s1Cond">
-            <option value="BB">BB</option>
-            <option value="SH">SH</option>
-          </select>
-        </div>
-      </div>
-      <div class="f-row-2">
-        <div class="f-group">
-          <label>Data Sessione 2 (S2)</label>
-          <input type="date" id="s2Date" />
-        </div>
-        <div class="f-group">
-          <label>Condizione S2</label>
-          <select id="s2Cond">
-            <option value="SH">SH</option>
-            <option value="BB">BB</option>
-          </select>
-        </div>
-      </div>
-      <div class="f-group">
-        <label>Colore soggetto</label>
-        <div class="swatches-row" id="colorSwatches"></div>
-      </div>
-      <div class="f-group">
-        <label>Note sul soggetto</label>
-        <textarea id="subjNotes" rows="2" placeholder="Note aggiuntive..."></textarea>
-      </div>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <button type="button" class="btn btn-danger" id="btnDeleteSubject" style="display:none;">Elimina</button>
-        <button type="submit" class="btn btn-primary" style="flex:1; min-height:44px; font-size:15px;">Salva Soggetto</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- BOTTOM SHEET: GIORNO -->
-<div class="sheet-backdrop" id="dayModal">
-  <div class="bottom-sheet">
-    <div class="sheet-grabber"></div>
-    <div class="sheet-head">
+<div class="modal-backdrop" id="dayModal">
+  <div class="modal-box">
+    <div class="modal-head">
       <h3 id="dayModalTitle">Dettaglio Giorno</h3>
-      <button class="x-btn" onclick="closeModal('dayModal')">✕</button>
+      <button class="close-btn" onclick="closeModal('dayModal')">✕</button>
     </div>
     <div id="dayModalContent"></div>
   </div>
 </div>
 
-<!-- BOTTOM SHEET: TUTTI I SOGGETTI -->
-<div class="sheet-backdrop" id="allSubjectsModal">
-  <div class="bottom-sheet">
-    <div class="sheet-grabber"></div>
-    <div class="sheet-head">
+<div class="modal-backdrop" id="allSubjectsModal">
+  <div class="modal-box">
+    <div class="modal-head">
       <h3>Tutti i Soggetti Reclutati</h3>
-      <button class="x-btn" onclick="closeModal('allSubjectsModal')">✕</button>
+      <button class="close-btn" onclick="closeModal('allSubjectsModal')">✕</button>
     </div>
     <div id="allSubjectsList"></div>
   </div>
 </div>
 
-<!-- ALARM BANNER -->
-<div class="alarm-banner" id="alarmPopup">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-    <strong>⏰ Promemoria Diario del Sonno!</strong>
-    <button class="x-btn" style="width:26px;height:26px;font-size:13px;" onclick="closeAlarmPopup()">✕</button>
+<div class="alarm-popup" id="alarmPopup">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <strong style="font-size:14px;">⏰ Promemoria Diario del Sonno!</strong>
+    <button class="close-btn" style="width:24px;height:24px;font-size:12px;" onclick="closeAlarmPopup()">✕</button>
   </div>
   <p id="alarmPopupText" style="margin:0 0 10px; font-size:13px; color:#3a3a3c;"></p>
   <div style="display:flex; gap:8px;">
-    <button class="btn btn-primary btn-sm" style="flex:1;" onclick="copyMessageTemplate()">📋 Copia messaggio</button>
-    <button class="btn btn-sm" onclick="snoozeAlarm()">💤 +10m</button>
+    <button class="btn btn-primary btn-sm" onclick="copyMessageTemplate()">📋 Copia messaggio</button>
+    <button class="btn btn-sm" onclick="snoozeAlarm()">💤 +10 min</button>
   </div>
 </div>
 
 <script>
   const PALETTE = [
-    "#007aff", "#34c759", "#ff9500", "#af52de",
-    "#ff2d55", "#00c7be", "#ff3b30", "#5856d6"
+    "#2563eb", "#059669", "#d97706", "#7c3aed",
+    "#db2777", "#0891b2", "#dc2626", "#4f46e5",
+    "#65a30d", "#ea580c"
   ];
 
   const STORAGE_KEYS = {
@@ -686,111 +734,150 @@
   }
 
   function formatDateISO(d) {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
   }
+
   function parseISO(str) {
     const [y, m, d] = str.split("-").map(Number);
     return new Date(y, m - 1, d);
   }
+
   function addDays(isoStr, delta) {
     const d = parseISO(isoStr);
     d.setDate(d.getDate() + delta);
     return formatDateISO(d);
   }
+
   function formatItShort(isoStr) {
     if (!isoStr) return "—";
-    const [, m, d] = isoStr.split("-");
+    const [y, m, d] = isoStr.split("-");
     return `${d}/${m}`;
   }
+
   function formatItFull(isoStr) {
-    return parseISO(isoStr).toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "long" });
+    const d = parseISO(isoStr);
+    return d.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   }
 
   function initEditableHeader() {
-    const tEl = document.getElementById("studyTitle");
-    const sEl = document.getElementById("studySubtitle");
-    if (localStorage.getItem(STORAGE_KEYS.TITLE)) tEl.textContent = localStorage.getItem(STORAGE_KEYS.TITLE);
-    if (localStorage.getItem(STORAGE_KEYS.SUBTITLE)) sEl.textContent = localStorage.getItem(STORAGE_KEYS.SUBTITLE);
+    const titleEl = document.getElementById("studyTitle");
+    const subEl = document.getElementById("studySubtitle");
+    const savedTitle = localStorage.getItem(STORAGE_KEYS.TITLE);
+    const savedSub = localStorage.getItem(STORAGE_KEYS.SUBTITLE);
+    if (savedTitle) titleEl.textContent = savedTitle;
+    if (savedSub) subEl.textContent = savedSub;
 
-    const bind = (el, key) => {
-      el.addEventListener("click", () => {
-        if (el.querySelector("input")) return;
-        const prev = el.textContent.replace(" ✏️", "");
-        const inp = document.createElement("input");
-        inp.className = "inline-edit-input";
-        inp.value = prev;
-        el.textContent = "";
-        el.appendChild(inp);
-        inp.focus();
-        const done = () => {
-          const v = inp.value.trim() || prev;
-          el.textContent = v;
-          localStorage.setItem(key, v);
-        };
-        inp.addEventListener("blur", done);
-        inp.addEventListener("keydown", (e) => { if (e.key === "Enter") done(); });
-      });
-    };
-    bind(tEl, STORAGE_KEYS.TITLE);
-    bind(sEl, STORAGE_KEYS.SUBTITLE);
+    titleEl.addEventListener("click", () => {
+      const next = prompt("Modifica titolo:", titleEl.textContent);
+      if (next && next.trim()) {
+        titleEl.textContent = next.trim();
+        localStorage.setItem(STORAGE_KEYS.TITLE, next.trim());
+      }
+    });
+
+    subEl.addEventListener("click", () => {
+      const next = prompt("Modifica sottotitolo:", subEl.textContent);
+      if (next && next.trim()) {
+        subEl.textContent = next.trim();
+        localStorage.setItem(STORAGE_KEYS.SUBTITLE, next.trim());
+      }
+    });
   }
 
   function initFilesDropdown() {
-    const dI = document.getElementById("linkDiaryInput");
-    const rI = document.getElementById("linkRecruitInput");
-    const mI = document.getElementById("msgNotesInput");
-    dI.value = filesData.diary || "";
-    rI.value = filesData.recruit || "";
-    mI.value = filesData.msg || "";
+    const diaryInp = document.getElementById("linkDiaryInput");
+    const recInp = document.getElementById("linkRecruitInput");
+    const msgInp = document.getElementById("msgNotesInput");
+
+    diaryInp.value = filesData.diary || "";
+    recInp.value = filesData.recruit || "";
+    msgInp.value = filesData.msg || "";
+
     const sync = () => {
-      filesData = { diary: dI.value.trim(), recruit: rI.value.trim(), msg: mI.value };
+      filesData.diary = diaryInp.value.trim();
+      filesData.recruit = recInp.value.trim();
+      filesData.msg = msgInp.value;
       saveAll();
     };
-    dI.addEventListener("input", sync);
-    rI.addEventListener("input", sync);
-    mI.addEventListener("input", sync);
+    diaryInp.addEventListener("input", sync);
+    recInp.addEventListener("input", sync);
+    msgInp.addEventListener("input", sync);
+
     document.getElementById("btnToggleFiles").addEventListener("click", () => {
       document.getElementById("filesDropdown").classList.toggle("open");
     });
   }
 
   function copyField(id) {
-    const v = document.getElementById(id).value.trim();
-    if (!v) return alert("Campo vuoto.");
-    navigator.clipboard.writeText(v);
-    alert("Copiato!");
+    const val = document.getElementById(id).value.trim();
+    if (!val) return alert("Il campo è vuoto.");
+    navigator.clipboard.writeText(val);
+    alert("Link copiato!");
   }
+
   function openUrlField(id) {
-    const v = document.getElementById(id).value.trim();
-    if (!v) return alert("Inserisci un link.");
-    window.open(v.startsWith("http") ? v : "https://" + v, "_blank");
+    const val = document.getElementById(id).value.trim();
+    if (!val) return alert("Inserisci prima un link.");
+    window.open(val.startsWith("http") ? val : "https://" + val, "_blank");
   }
+
   function copyMessageTemplate() {
     const link = filesData.diary || "[Link Diario]";
     const raw = filesData.msg && filesData.msg.trim()
       ? filesData.msg
-      : "Ciao! Ti ricordo di compilare il Diario del Sonno di oggi: {LINK}";
-    const out = raw.includes("{LINK}") ? raw.replace(/\{LINK\}/g, link) : `${raw}
-${link}`;
-    navigator.clipboard.writeText(out);
+      : "Ciao! Ti ricordo di compilare il Diario del Sonno di oggi al seguente link: {LINK}";
+    const finalMsg = raw.includes("{LINK}") ? raw.replace(/\{LINK\}/g, link) : `${raw}\n${link}`;
+    navigator.clipboard.writeText(finalMsg);
     alert("Messaggio copiato!");
   }
 
   function getScheduleEvents() {
     const events = [];
     subjects.forEach((s) => {
-      [{ num: 1, date: s.s1Date, cond: s.s1Cond }, { num: 2, date: s.s2Date, cond: s.s2Cond }].forEach((sess) => {
+      const sessions = [
+        { num: 1, date: s.s1Date, cond: s.s1Cond },
+        { num: 2, date: s.s2Date, cond: s.s2Cond }
+      ];
+      sessions.forEach((sess) => {
         if (!sess.date) return;
-        events.push({ type: "diary", diaryDay: 1, sessionNum: sess.num, cond: sess.cond, date: addDays(sess.date, -2), subject: s, checkKey: `${s.id}_S${sess.num}_D1` });
-        events.push({ type: "diary", diaryDay: 2, sessionNum: sess.num, cond: sess.cond, date: addDays(sess.date, -1), subject: s, checkKey: `${s.id}_S${sess.num}_D2` });
-        events.push({ type: "session", diaryDay: 3, sessionNum: sess.num, cond: sess.cond, date: sess.date, subject: s, checkKey: `${s.id}_S${sess.num}_D3` });
+        events.push({
+          type: "diary",
+          diaryDay: 1,
+          sessionNum: sess.num,
+          cond: sess.cond,
+          date: addDays(sess.date, -2),
+          subject: s,
+          checkKey: `${s.id}_S${sess.num}_D1`
+        });
+        events.push({
+          type: "diary",
+          diaryDay: 2,
+          sessionNum: sess.num,
+          cond: sess.cond,
+          date: addDays(sess.date, -1),
+          subject: s,
+          checkKey: `${s.id}_S${sess.num}_D2`
+        });
+        events.push({
+          type: "session",
+          diaryDay: 3,
+          sessionNum: sess.num,
+          cond: sess.cond,
+          date: sess.date,
+          subject: s,
+          checkKey: `${s.id}_S${sess.num}_D3`
+        });
       });
     });
     return events;
   }
 
   function getSubjectCompletion(subj) {
-    let total = 0, done = 0;
+    let total = 0;
+    let done = 0;
     [1, 2].forEach((num) => {
       const dt = num === 1 ? subj.s1Date : subj.s2Date;
       if (dt) {
@@ -803,40 +890,62 @@ ${link}`;
     return { done, total };
   }
 
+  function isSubjectCompleted(subj) {
+    const today = formatDateISO(new Date());
+    const lastDate = subj.s2Date || subj.s1Date;
+    const { done, total } = getSubjectCompletion(subj);
+    if (total > 0 && done === total) return true;
+    if (lastDate && lastDate < today) return true;
+    return false;
+  }
+
   function renderSubjectsStrip() {
     const strip = document.getElementById("subjectsStrip");
     strip.innerHTML = "";
 
     const allCard = document.createElement("div");
-    allCard.className = "all-card-mobile" + (selectedSubjectFilter === null ? " active" : "");
+    allCard.className = "all-subjects-card" + (selectedSubjectFilter === null ? " active-filter" : "");
     allCard.innerHTML = `
       <div>
-        <div style="font-size:12.5px; font-weight:700;">👥 Tutti</div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${subjects.length} soggetti</div>
+        <div style="font-size:13px; font-weight:700;">👥 Tutti</div>
+        <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">${subjects.length} soggetti</div>
       </div>
-      <button class="btn btn-sm" style="margin-top:8px; width:100%;" onclick="event.stopPropagation(); openAllSubjectsModal()">Lista completa</button>
+      <button class="btn btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openAllSubjectsModal()">Lista completa</button>
     `;
-    allCard.addEventListener("click", () => { selectedSubjectFilter = null; renderAll(); });
+    allCard.addEventListener("click", () => {
+      selectedSubjectFilter = null;
+      renderAll();
+    });
     strip.appendChild(allCard);
 
     subjects.forEach((s) => {
       const { done, total } = getSubjectCompletion(s);
       const card = document.createElement("div");
-      card.className = "subj-card-mobile" + (selectedSubjectFilter === s.id ? " selected" : "");
+      card.className = "subject-card" + (selectedSubjectFilter === s.id ? " selected" : "");
       card.style.borderLeftColor = s.color;
+      const s1Tag = s.s1Cond === "BB" ? "cond-bb" : "cond-sh";
+      const s2Tag = s.s2Cond === "BB" ? "cond-bb" : "cond-sh";
+
       card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span class="code-chip" style="background:${s.color};">${escapeHtml(s.code || "SOGG")}</span>
-          <span style="font-size:10.5px; font-weight:700; color:var(--text-muted);">${done}/${total} <span onclick="event.stopPropagation(); openEditSubject('${s.id}')" style="padding-left:4px;">✏️</span></span>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+          <div>
+            <span class="subj-code-pill" style="background:${s.color};">${escapeHtml(s.code || "SOGG")}</span>
+            <div class="subj-name">${escapeHtml(s.name)}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
+            <span class="subj-progress">${done}/${total}</span>
+            <button class="btn btn-sm" style="padding:2px 6px; font-size:11px;" onclick="event.stopPropagation(); openEditSubject('${s.id}')">✏️</button>
+          </div>
         </div>
-        <div class="m-subj-name">${escapeHtml(s.name)}</div>
-        <div class="m-cond-row">
-          <span>S1 ${formatItShort(s.s1Date)}</span>
-          <span class="${s.s1Cond === "BB" ? "tag-bb" : "tag-sh"}">${s.s1Cond}</span>
-        </div>
-        <div class="m-cond-row">
-          <span>S2 ${formatItShort(s.s2Date)}</span>
-          <span class="${s.s2Cond === "BB" ? "tag-bb" : "tag-sh"}">${s.s2Cond}</span>
+        <div class="cond-stack">
+          <div class="cond-line">
+            <span><strong>S1:</strong> ${formatItShort(s.s1Date)}</span>
+            <span class="cond-tag ${s1Tag}">${s.s1Cond}</span>
+          </div>
+          <div class="cond-line">
+            <span><strong>S2:</strong> ${formatItShort(s.s2Date)}</span>
+            <span class="cond-tag ${s2Tag}">${s.s2Cond}</span>
+          </div>
         </div>
       `;
       card.addEventListener("click", () => {
@@ -850,57 +959,76 @@ ${link}`;
   function renderCalendar() {
     const year = currentMonthDate.getFullYear();
     const month = currentMonthDate.getMonth();
-    document.getElementById("calMonthTitle").textContent = currentMonthDate.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
+    document.getElementById("calMonthTitle").textContent = currentMonthDate.toLocaleDateString("it-IT", {
+      month: "long",
+      year: "numeric"
+    });
 
     const grid = document.getElementById("calGrid");
     grid.innerHTML = "";
-    const firstDay = new Date(year, month, 1);
-    let offset = firstDay.getDay() - 1;
-    if (offset < 0) offset = 6;
-    const start = new Date(year, month, 1 - offset);
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    let startOffset = firstDayOfMonth.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+
+    const startDate = new Date(year, month, 1 - startOffset);
     const todayISO = formatDateISO(new Date());
 
-    let events = getScheduleEvents();
-    if (selectedSubjectFilter) events = events.filter((e) => e.subject.id === selectedSubjectFilter);
+    let allEvents = getScheduleEvents();
+    if (selectedSubjectFilter) {
+      allEvents = allEvents.filter((e) => e.subject.id === selectedSubjectFilter);
+    }
 
     for (let i = 0; i < 42; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      const iso = formatDateISO(d);
-      const dayEvs = events.filter((e) => e.date === iso);
-      const sessEvs = dayEvs.filter((e) => e.type === "session");
-      const diaryEvs = dayEvs.filter((e) => e.type === "diary");
+      const cellDate = new Date(startDate);
+      cellDate.setDate(startDate.getDate() + i);
+      const iso = formatDateISO(cellDate);
+      const inMonth = cellDate.getMonth() === month;
+
+      const dayEvents = allEvents.filter((e) => e.date === iso);
+      const sessionEvents = dayEvents.filter((e) => e.type === "session");
+      const diaryOnlyEvents = dayEvents.filter((e) => e.type === "diary");
 
       const cell = document.createElement("div");
-      cell.className = "m-cell" + (d.getMonth() !== month ? " other" : "") + (iso === todayISO ? " today" : "");
+      cell.className = "day-cell" + (!inMonth ? " other-month" : "") + (iso === todayISO ? " today" : "");
 
-      if (sessEvs.length > 0) {
-        const c1 = sessEvs[0].subject.color;
-        cell.style.background = sessEvs.length === 1 ? c1 : `linear-gradient(135deg, ${c1} 50%, ${sessEvs[1].subject.color} 50%)`;
-        cell.style.borderColor = c1;
-        cell.style.color = "#fff";
-      } else if (diaryEvs.length > 0) {
-        cell.style.border = `1.5px dashed ${diaryEvs[0].subject.color}`;
+      if (sessionEvents.length > 0) {
+        if (sessionEvents.length === 1) {
+          const c = sessionEvents[0].subject.color;
+          cell.style.background = c;
+          cell.style.borderColor = c;
+          cell.style.color = "#fff";
+        } else {
+          const c1 = sessionEvents[0].subject.color;
+          const c2 = sessionEvents[1].subject.color;
+          cell.style.background = `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
+          cell.style.borderColor = c1;
+          cell.style.color = "#fff";
+        }
+      } else if (diaryOnlyEvents.length > 0) {
+        const c = diaryOnlyEvents[0].subject.color;
+        cell.style.border = `2px dashed ${c}`;
+        cell.style.background = "#ffffff";
       }
 
-      const top = document.createElement("div");
-      top.className = "m-cell-top";
-      top.innerHTML = `<span class="m-num">${d.getDate()}</span>`;
-      cell.appendChild(top);
+      const header = document.createElement("div");
+      header.className = "day-header";
+      header.innerHTML = `<span class="day-num">${cellDate.getDate()}</span>` +
+        (sessionEvents.length > 0 ? `<span class="session-dot-top">SESS</span>` : "");
+      cell.appendChild(header);
 
-      dayEvs.forEach((ev) => {
-        const p = document.createElement("div");
-        const code = ev.subject.code || ev.subject.name.slice(0, 4);
-        const chk = checks[ev.checkKey] ? "✓" : "";
+      dayEvents.slice(0, 3).forEach((ev) => {
+        const badge = document.createElement("div");
+        const codeLabel = ev.subject.code || ev.subject.name.split(" ")[0];
         if (ev.type === "session") {
-          p.className = "m-pill m-pill-sess";
-          p.textContent = `${code}·${ev.cond}${chk}`;
+          badge.className = "ev-badge ev-session";
+          badge.textContent = `${codeLabel} S${ev.sessionNum}[${ev.cond}]`;
         } else {
-          p.className = "m-pill m-pill-diary";
-          p.style.color = ev.subject.color;
-          p.textContent = `${code}·D${ev.diaryDay}${chk}`;
+          badge.className = "ev-badge ev-diary";
+          badge.style.color = ev.subject.color;
+          badge.textContent = `${codeLabel} D${ev.diaryDay}`;
         }
-        cell.appendChild(p);
+        cell.appendChild(badge);
       });
 
       cell.addEventListener("click", () => openDayModal(iso));
@@ -911,96 +1039,108 @@ ${link}`;
   function openDayModal(isoStr) {
     activeDayStr = isoStr;
     document.getElementById("dayModalTitle").textContent = formatItFull(isoStr);
-    const body = document.getElementById("dayModalContent");
-    body.innerHTML = "";
+    const container = document.getElementById("dayModalContent");
+    container.innerHTML = "";
 
-    const dayEvs = getScheduleEvents().filter((e) => e.date === isoStr);
-    const sessEvs = dayEvs.filter((e) => e.type === "session");
-    const diaryEvs = dayEvs.filter((e) => e.type === "diary");
+    const allEvents = getScheduleEvents().filter((e) => e.date === isoStr);
+    const sessionEvents = allEvents.filter((e) => e.type === "session");
+    const diaryEvents = allEvents.filter((e) => e.type === "diary");
 
-    if (dayEvs.length === 0) {
-      body.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessun evento in questa data.</p>`;
+    if (allEvents.length === 0) {
+      container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessuna sessione o diario in questa data.</p>`;
     }
 
-    // Essential Session View (Name/Surname, Phone, Condition BB/SH, WhatsApp button, Notes)
-    sessEvs.forEach((ev) => {
+    sessionEvents.forEach((ev) => {
       const s = ev.subject;
       const noteKey = `sess_${s.id}_${isoStr}`;
+      const condLabel = ev.cond === "BB" ? "BB (Binaural Beats)" : "SHAM";
+      const condClass = ev.cond === "BB" ? "cond-bb" : "cond-sh";
       const cleanPhone = (s.phone || "").replace(/[^0-9]/g, "");
       const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "";
-      const condBadge = ev.cond === "BB"
-        ? `<span class="tag-bb" style="font-size:12px; padding:3px 8px;">BB</span>`
-        : `<span class="tag-sh" style="font-size:12px; padding:3px 8px;">SHAM</span>`;
 
       const box = document.createElement("div");
-      box.className = "sess-box";
+      box.className = "session-clean-box";
       box.style.borderLeftColor = s.color;
       box.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-          <strong style="font-size:16px;">${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
-          ${condBadge}
+          <strong style="font-size:15.5px;">${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
+          <span class="cond-tag ${condClass}">${condLabel}</span>
         </div>
-        <div style="font-size:13.5px; color:var(--text-muted); margin-top:4px;">📱 ${s.phone ? escapeHtml(s.phone) : "Nessun numero"}</div>
-        ${waUrl ? `<a class="wa-btn" href="${waUrl}" target="_blank" rel="noopener">💬 Apri chat WhatsApp</a>` : ""}
-        <div class="f-group" style="margin-bottom:0; margin-top:8px;">
-          <label>Note</label>
-          <textarea rows="3" placeholder="Scrivi note..." oninput="saveDayNote('${noteKey}', this.value)">${escapeHtml(dayNotes[noteKey] || "")}</textarea>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:6px;">📱 ${s.phone ? escapeHtml(s.phone) : "Nessun numero"}</div>
+        ${waUrl ? `<a class="btn-whatsapp" href="${waUrl}" target="_blank" rel="noopener">💬 Apri WhatsApp</a>` : ""}
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Note sessione</label>
+          <textarea rows="2" placeholder="Note sessione..." oninput="saveDayNote('${noteKey}', this.value)">${escapeHtml(dayNotes[noteKey] || "")}</textarea>
         </div>
       `;
-      body.appendChild(box);
+      container.appendChild(box);
     });
 
-    // Diary Days View
-    if (diaryEvs.length > 0) {
-      const dCard = document.createElement("div");
-      dCard.className = "diary-card";
-      let html = `<div style="font-weight:700; font-size:14px; margin-bottom:6px;">🌙 Diario del Sonno</div>`;
-      let opts = "";
-      diaryEvs.forEach((ev) => {
-        const lbl = `${ev.subject.code || ev.subject.name} · Diario ${ev.diaryDay}/3`;
-        opts += `<option value="${escapeHtml(lbl)}">${escapeHtml(lbl)}</option>`;
-        html += `
-          <label class="chk-line">
-            <input type="checkbox" ${checks[ev.checkKey] ? "checked" : ""} onchange="toggleCheck('${ev.checkKey}', this.checked)" />
-            <span>${escapeHtml(lbl)}</span>
+    if (diaryEvents.length > 0) {
+      const dBox = document.createElement("div");
+      dBox.className = "diary-block";
+      let checksHtml = `<div style="font-weight:700; font-size:13.5px; margin-bottom:6px;">🌙 Diari del Sonno</div>`;
+      diaryEvents.forEach((ev) => {
+        const checked = checks[ev.checkKey] ? "checked" : "";
+        checksHtml += `
+          <label class="check-row">
+            <input type="checkbox" ${checked} onchange="toggleCheck('${ev.checkKey}', this.checked)" />
+            <span style="color:${ev.subject.color};">●</span>
+            <span>${escapeHtml(ev.subject.code || "")} ${escapeHtml(ev.subject.name)} — D${ev.diaryDay}/3 (S${ev.sessionNum})</span>
           </label>
         `;
       });
 
-      const dayRems = reminders.filter((r) => r.date === isoStr);
-      let remHtml = "";
-      dayRems.forEach((r) => {
-        remHtml += `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#f2f2f7; padding:6px 9px; border-radius:8px; font-size:12.5px; margin-top:6px;">
-            <span>⏰ <strong>${r.time}</strong> · ${escapeHtml(r.label)}</span>
-            <button class="btn btn-sm btn-danger" onclick="deleteReminder('${r.id}')">✕</button>
-          </div>
-        `;
+      let optionsHtml = "";
+      diaryEvents.forEach((ev) => {
+        const label = `${ev.subject.code || ev.subject.name} · D${ev.diaryDay}/3`;
+        optionsHtml += `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`;
       });
 
-      html += `
-        <div style="border-top:1px solid #ececef; margin-top:10px; padding-top:10px;">
-          <div style="font-weight:700; font-size:13px; margin-bottom:6px;">🔔 Imposta promemoria diario</div>
-          <div class="f-group">
-            <select id="remDiarySelect">${opts}</select>
+      const dayReminders = reminders.filter((r) => r.date === isoStr);
+      let remListHtml = "";
+      if (dayReminders.length > 0) {
+        remListHtml = `<div style="margin-top:8px; display:flex; flex-direction:column; gap:5px;">`;
+        dayReminders.forEach((r) => {
+          remListHtml += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#f5f5f7; padding:6px 9px; border-radius:8px; font-size:12px;">
+              <span>⏰ <strong>${r.time}</strong> — ${escapeHtml(r.label)}</span>
+              <button class="btn btn-sm btn-danger" style="padding:2px 6px;" onclick="deleteReminder('${r.id}')">✕</button>
+            </div>
+          `;
+        });
+        remListHtml += `</div>`;
+      }
+
+      dBox.innerHTML = checksHtml + `
+        <div class="reminder-box">
+          <div style="font-weight:700; font-size:12.5px;">🔔 Promemoria diario</div>
+          <div class="reminder-controls">
+            <select id="remDiarySelect">${optionsHtml}</select>
+            <input type="time" id="remTimeInput" value="21:00" />
+            <button type="button" class="btn btn-primary btn-sm" onclick="addDiaryReminder('${isoStr}')">Salva</button>
+            <button type="button" class="btn btn-sm" onclick="exportSingleIcs('${isoStr}')">📲 .ics</button>
           </div>
-          <div class="f-row-2">
-            <div class="f-group"><input type="time" id="remTimeInput" value="21:00" /></div>
-            <button type="button" class="btn btn-primary" onclick="addDiaryReminder('${isoStr}')">Salva nel Planner</button>
-          </div>
-          <button type="button" class="btn" style="width:100%; margin-top:4px;" onclick="exportSingleIcs('${isoStr}')">📲 Suona su iPhone (Calendario)</button>
-          ${remHtml}
+          ${remListHtml}
         </div>
       `;
-      dCard.innerHTML = html;
-      body.appendChild(dCard);
+      container.appendChild(dBox);
     }
 
     openModal("dayModal");
   }
 
-  function toggleCheck(k, v) { checks[k] = v; saveAll(); renderAll(); }
-  function saveDayNote(k, v) { dayNotes[k] = v; saveAll(); }
+  function toggleCheck(key, val) {
+    checks[key] = val;
+    saveAll();
+    renderSubjectsStrip();
+    renderCalendar();
+  }
+
+  function saveDayNote(key, val) {
+    dayNotes[key] = val;
+    saveAll();
+  }
 
   function addDiaryReminder(isoStr) {
     const label = document.getElementById("remDiarySelect").value;
@@ -1010,6 +1150,7 @@ ${link}`;
     saveAll();
     openDayModal(isoStr);
   }
+
   function deleteReminder(id) {
     reminders = reminders.filter((r) => r.id !== id);
     saveAll();
@@ -1023,60 +1164,81 @@ ${link}`;
     const cleanDate = isoStr.replace(/-/g, "");
     const dtStart = `${cleanDate}T${hh}${mm}00`;
     const dtEnd = `${cleanDate}T${hh}${String(Math.min(59, Number(mm) + 15)).padStart(2, "0")}00`;
-    const ics = [
-      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MORFEO iPhone//IT",
-      "BEGIN:VEVENT", `UID:morfeo-${Date.now()}@iphone`,
-      `DTSTAMP:${cleanDate}T080000Z`, `DTSTART:${dtStart}`, `DTEND:${dtEnd}`,
+    const link = filesData.diary || "";
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//MORFEO Thesis Planner//IT",
+      "BEGIN:VEVENT",
+      `UID:morfeo-${Date.now()}@thesisplanner`,
+      `DTSTAMP:${cleanDate}T080000Z`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
       `SUMMARY:🌙 Diario del Sonno · ${label}`,
-      `DESCRIPTION:Compila o invia il Diario del Sonno (${label}). ${filesData.diary || ""}`,
-      "BEGIN:VALARM", "TRIGGER:-PT0M", "ACTION:DISPLAY", `DESCRIPTION:${label}`, "END:VALARM",
-      "END:VEVENT", "END:VCALENDAR"
-    ].join("
-");
-    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      `DESCRIPTION:Invia o compila il Diario del Sonno (${label}). ${link}`,
+      "BEGIN:VALARM",
+      "TRIGGER:-PT0M",
+      "ACTION:DISPLAY",
+      `DESCRIPTION:Promemoria Diario del Sonno: ${label}`,
+      "END:VALARM",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\n");
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `diario_${isoStr}.ics`;
+    a.href = url;
+    a.download = `promemoria_diario_${isoStr}.ics`;
     a.click();
+    URL.revokeObjectURL(url);
   }
 
   setInterval(() => {
     const now = new Date();
     const todayISO = formatDateISO(now);
-    const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const hhmm = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
     const match = reminders.find((r) => r.date === todayISO && r.time === hhmm);
     if (match && lastTriggeredReminder !== match.id + "_" + hhmm) {
       lastTriggeredReminder = match.id + "_" + hhmm;
-      document.getElementById("alarmPopupText").textContent = `Sono le ${match.time}: ricordati ${match.label}!`;
-      document.getElementById("alarmPopup").classList.add("open");
+      showAlarmPopup(`È l'ora (${match.time}) per: ${match.label}!`);
     }
   }, 15000);
 
+  function showAlarmPopup(text) {
+    document.getElementById("alarmPopupText").textContent = text;
+    document.getElementById("alarmPopup").classList.add("open");
+  }
   function closeAlarmPopup() { document.getElementById("alarmPopup").classList.remove("open"); }
   function snoozeAlarm() {
     closeAlarmPopup();
-    setTimeout(() => {
-      document.getElementById("alarmPopupText").textContent = "Posticipo terminato! Ricordati il Diario del Sonno.";
-      document.getElementById("alarmPopup").classList.add("open");
-    }, 10 * 60 * 1000);
+    setTimeout(() => showAlarmPopup("Posticipo terminato! Ricordati il Diario del Sonno."), 10 * 60 * 1000);
   }
 
   function renderSwatches() {
     const wrap = document.getElementById("colorSwatches");
     wrap.innerHTML = "";
     PALETTE.forEach((c) => {
-      const d = document.createElement("div");
-      d.className = "sw-dot" + (selectedSwatchColor === c ? " active" : "");
-      d.style.background = c;
-      d.onclick = () => { selectedSwatchColor = c; renderSwatches(); };
-      wrap.appendChild(d);
+      const el = document.createElement("div");
+      el.className = "swatch" + (selectedSwatchColor === c ? " active" : "");
+      el.style.background = c;
+      el.addEventListener("click", () => {
+        selectedSwatchColor = c;
+        renderSwatches();
+      });
+      wrap.appendChild(el);
     });
+  }
+
+  function suggestNextCode() {
+    return "S" + String(subjects.length + 1).padStart(2, "0");
   }
 
   document.getElementById("btnNewSubject").addEventListener("click", () => {
     document.getElementById("subjectModalTitle").textContent = "Nuovo Soggetto";
     document.getElementById("editSubjectId").value = "";
-    document.getElementById("subjCode").value = "S" + String(subjects.length + 1).padStart(2, "0");
+    document.getElementById("subjCode").value = suggestNextCode();
     document.getElementById("subjName").value = "";
     document.getElementById("subjPhone").value = "";
     document.getElementById("s1Date").value = formatDateISO(new Date());
@@ -1104,9 +1266,9 @@ ${link}`;
     document.getElementById("s2Cond").value = s.s2Cond || "SH";
     document.getElementById("subjNotes").value = s.notes || "";
     selectedSwatchColor = s.color || PALETTE[0];
-    const del = document.getElementById("btnDeleteSubject");
-    del.style.display = "inline-flex";
-    del.onclick = () => {
+    const delBtn = document.getElementById("btnDeleteSubject");
+    delBtn.style.display = "inline-flex";
+    delBtn.onclick = () => {
       if (confirm(`Eliminare ${s.name}?`)) {
         subjects = subjects.filter((x) => x.id !== id);
         if (selectedSubjectFilter === id) selectedSubjectFilter = null;
@@ -1122,7 +1284,7 @@ ${link}`;
   document.getElementById("subjectForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const editId = document.getElementById("editSubjectId").value;
-    const obj = {
+    const payload = {
       id: editId || "subj_" + Date.now(),
       code: document.getElementById("subjCode").value.trim(),
       name: document.getElementById("subjName").value.trim(),
@@ -1134,7 +1296,11 @@ ${link}`;
       color: selectedSwatchColor,
       notes: document.getElementById("subjNotes").value.trim()
     };
-    subjects = editId ? subjects.map((x) => (x.id === editId ? obj : x)) : [...subjects, obj];
+    if (editId) {
+      subjects = subjects.map((s) => (s.id === editId ? payload : s));
+    } else {
+      subjects.push(payload);
+    }
     saveAll();
     closeModal("subjectModal");
     renderAll();
@@ -1143,32 +1309,30 @@ ${link}`;
   function openAllSubjectsModal() {
     const list = document.getElementById("allSubjectsList");
     if (subjects.length === 0) {
-      list.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessun soggetto inserito.</p>`;
+      list.innerHTML = `<p style="color:var(--text-muted); font-size:13.5px;">Nessun soggetto reclutato.</p>`;
     } else {
-      const today = formatDateISO(new Date());
       list.innerHTML = "";
       subjects.forEach((s) => {
-        const { done, total } = getSubjectCompletion(s);
-        const last = s.s2Date || s.s1Date;
-        const isDone = (total > 0 && done === total) || (last && last < today);
-        const row = document.createElement("div");
-        row.style.cssText = `border:1.5px solid var(--border); border-left:5px solid ${s.color}; border-radius:11px; padding:10px 12px; margin-bottom:8px;`;
-        row.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+        const done = isSubjectCompleted(s);
+        const { done: dCount, total: tCount } = getSubjectCompletion(s);
+        const item = document.createElement("div");
+        item.className = "all-subj-item";
+        item.style.borderLeftColor = s.color;
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
             <strong>${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
-            <span style="font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; background:${isDone ? "#dcfce7" : "#dbeafe"}; color:${isDone ? "#166534" : "#1e40af"};">
-              ${isDone ? "✓ Già fatto" : `${done}/${total}`}
-            </span>
+            <span class="status-pill ${done ? "status-done" : "status-active"}">${done ? "✓ Fatto" : `${dCount}/${tCount}`}</span>
           </div>
           <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
-            S1: ${formatItShort(s.s1Date)} (${s.s1Cond}) · S2: ${formatItShort(s.s2Date)} (${s.s2Cond})
+            S1: <strong>${formatItShort(s.s1Date)}</strong> (${s.s1Cond}) · S2: <strong>${formatItShort(s.s2Date)}</strong> (${s.s2Cond})
           </div>
+          ${s.phone ? `<div style="font-size:12px; color:var(--text-muted); margin-top:3px;">📱 ${escapeHtml(s.phone)}</div>` : ""}
           <div style="display:flex; gap:6px; margin-top:8px;">
             <button class="btn btn-sm" onclick="selectedSubjectFilter='${s.id}'; closeModal('allSubjectsModal'); renderAll();">Filtra</button>
             <button class="btn btn-sm" onclick="closeModal('allSubjectsModal'); openEditSubject('${s.id}');">Modifica</button>
           </div>
         `;
-        list.appendChild(row);
+        list.appendChild(item);
       });
     }
     openModal("allSubjectsModal");
@@ -1176,15 +1340,34 @@ ${link}`;
 
   function openModal(id) { document.getElementById(id).classList.add("open"); }
   function closeModal(id) { document.getElementById(id).classList.remove("open"); }
-  function escapeHtml(s) {
-    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
   }
 
-  document.getElementById("btnPrevMonth").onclick = () => { currentMonthDate.setMonth(currentMonthDate.getMonth() - 1); renderCalendar(); };
-  document.getElementById("btnNextMonth").onclick = () => { currentMonthDate.setMonth(currentMonthDate.getMonth() + 1); renderCalendar(); };
-  document.getElementById("btnToday").onclick = () => { currentMonthDate = new Date(); currentMonthDate.setDate(1); renderCalendar(); };
+  document.getElementById("btnPrevMonth").addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+    renderCalendar();
+  });
+  document.getElementById("btnNextMonth").addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+    renderCalendar();
+  });
+  document.getElementById("btnToday").addEventListener("click", () => {
+    currentMonthDate = new Date();
+    currentMonthDate.setDate(1);
+    renderCalendar();
+  });
 
-  function renderAll() { renderSubjectsStrip(); renderCalendar(); }
+  function renderAll() {
+    renderSubjectsStrip();
+    renderCalendar();
+  }
+
   initEditableHeader();
   initFilesDropdown();
   renderAll();

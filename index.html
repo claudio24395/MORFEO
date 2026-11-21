@@ -1089,4 +1089,489 @@
     allCard.innerHTML = `
       <div>
         <div style="font-size:13.5px; font-weight:700;">👥 Tutti i soggetti</div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${subjects.length} reclutati totali</div>
+      </div>
+      <div style="display:flex; gap:6px; margin-top:10px;">
+        <button class="btn btn-sm" style="width:100%; justify-content:center;" onclick="event.stopPropagation(); openAllSubjectsModal()">Apri lista completa</button>
+      </div>
+    `;
+    allCard.addEventListener("click", () => {
+      selectedSubjectFilter = null;
+      renderAll();
+    });
+    strip.appendChild(allCard);
+
+    subjects.forEach((s) => {
+      const { done, total } = getSubjectCompletion(s);
+      const card = document.createElement("div");
+      card.className = "subject-card" + (selectedSubjectFilter === s.id ? " selected" : "");
+      card.style.borderLeftColor = s.color;
+
+      const s1Tag = s.s1Cond === "BB" ? "cond-bb" : "cond-sh";
+      const s2Tag = s.s2Cond === "BB" ? "cond-bb" : "cond-sh";
+
+      card.innerHTML = `
+        <div class="subj-card-top">
+          <div>
+            <span class="subj-code-pill" style="background:${s.color};">${escapeHtml(s.code || "SOGG")}</span>
+            <div class="subj-name">${escapeHtml(s.name)}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <span class="subj-progress">${done}/${total}</span>
+            <button class="btn btn-sm" style="padding:2px 6px; font-size:11px;" title="Modifica soggetto" onclick="event.stopPropagation(); openEditSubject('${s.id}')">✏️</button>
+          </div>
+        </div>
+        <div class="cond-stack">
+          <div class="cond-line">
+            <span><strong>S1:</strong> ${formatItShort(s.s1Date)}</span>
+            <span class="cond-tag ${s1Tag}">${s.s1Cond}</span>
+          </div>
+          <div class="cond-line">
+            <span><strong>S2:</strong> ${formatItShort(s.s2Date)}</span>
+            <span class="cond-tag ${s2Tag}">${s.s2Cond}</span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener("click", () => {
+        selectedSubjectFilter = selectedSubjectFilter === s.id ? null : s.id;
+        renderAll();
+      });
+
+      strip.appendChild(card);
+    });
+  }
+
+  function renderCalendar() {
+    const year = currentMonthDate.getFullYear();
+    const month = currentMonthDate.getMonth();
+    document.getElementById("calMonthTitle").textContent = currentMonthDate.toLocaleDateString("it-IT", {
+      month: "long",
+      year: "numeric"
+    });
+
+    const grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    let startOffset = firstDayOfMonth.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+
+    const startDate = new Date(year, month, 1 - startOffset);
+    const todayISO = formatDateISO(new Date());
+
+    let allEvents = getScheduleEvents();
+    if (selectedSubjectFilter) {
+      allEvents = allEvents.filter((e) => e.subject.id === selectedSubjectFilter);
+    }
+
+    for (let i = 0; i < 42; i++) {
+      const cellDate = new Date(startDate);
+      cellDate.setDate(startDate.getDate() + i);
+      const iso = formatDateISO(cellDate);
+      const inMonth = cellDate.getMonth() === month;
+
+      const dayEvents = allEvents.filter((e) => e.date === iso);
+      const sessionEvents = dayEvents.filter((e) => e.type === "session");
+      const diaryOnlyEvents = dayEvents.filter((e) => e.type === "diary");
+
+      const cell = document.createElement("div");
+      cell.className = "day-cell" + (!inMonth ? " other-month" : "") + (iso === todayISO ? " today" : "");
+
+      if (sessionEvents.length > 0) {
+        if (sessionEvents.length === 1) {
+          const c = sessionEvents[0].subject.color;
+          cell.style.background = c;
+          cell.style.borderColor = c;
+          cell.style.color = "#fff";
+        } else {
+          const c1 = sessionEvents[0].subject.color;
+          const c2 = sessionEvents[1].subject.color;
+          cell.style.background = `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
+          cell.style.borderColor = c1;
+          cell.style.color = "#fff";
+        }
+      } else if (diaryOnlyEvents.length > 0) {
+        const c = diaryOnlyEvents[0].subject.color;
+        cell.style.border = `2px dashed ${c}`;
+        cell.style.background = "#ffffff";
+      }
+
+      const header = document.createElement("div");
+      header.className = "day-header";
+      header.innerHTML = `<span class="day-num">${cellDate.getDate()}</span>` +
+        (sessionEvents.length > 0 ? `<span class="session-pill-top">SESSIONE</span>` : "");
+      cell.appendChild(header);
+
+      dayEvents.forEach((ev) => {
+        const badge = document.createElement("div");
+        const isChecked = !!checks[ev.checkKey];
+        const codeLabel = ev.subject.code || ev.subject.name.split(" ")[0];
+        if (ev.type === "session") {
+          badge.className = "ev-badge ev-session";
+          badge.innerHTML = `<span>⚡ ${escapeHtml(codeLabel)} · S${ev.sessionNum} [${ev.cond}]</span><span>${isChecked ? "✓" : ""}</span>`;
+        } else {
+          badge.className = "ev-badge ev-diary";
+          badge.style.color = ev.subject.color;
+          badge.innerHTML = `<span>🌙 ${escapeHtml(codeLabel)} · D${ev.diaryDay}/3</span><span>${isChecked ? "✓" : ""}</span>`;
+        }
+        cell.appendChild(badge);
+      });
+
+      cell.addEventListener("click", () => openDayModal(iso));
+      grid.appendChild(cell);
+    }
+  }
+
+  function openDayModal(isoStr) {
+    activeDayStr = isoStr;
+    document.getElementById("dayModalTitle").textContent = formatItFull(isoStr);
+    const container = document.getElementById("dayModalContent");
+    container.innerHTML = "";
+
+    const allEvents = getScheduleEvents().filter((e) => e.date === isoStr);
+    const sessionEvents = allEvents.filter((e) => e.type === "session");
+    const diaryEvents = allEvents.filter((e) => e.type === "diary");
+
+    if (allEvents.length === 0) {
+      container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessuna sessione o diario programmato per questa data.</p>`;
+    }
+
+    sessionEvents.forEach((ev) => {
+      const s = ev.subject;
+      const noteKey = `sess_${s.id}_${isoStr}`;
+      const condLabel = ev.cond === "BB" ? "BB (Binaural Beats)" : "SHAM";
+      const condClass = ev.cond === "BB" ? "cond-bb" : "cond-sh";
+      const cleanPhone = (s.phone || "").replace(/[^0-9]/g, "");
+      const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "";
+
+      const box = document.createElement("div");
+      box.className = "session-clean-box";
+      box.style.borderLeftColor = s.color;
+      box.innerHTML = `
+        <div class="session-clean-header">
+          <div class="session-clean-name">${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</div>
+          <span class="cond-tag ${condClass}" style="font-size:12.5px; padding:3px 9px;">${condLabel}</span>
+        </div>
+        <div class="session-clean-phone">📱 ${s.phone ? escapeHtml(s.phone) : "Numero non inserito"}</div>
+        ${waUrl ? `<a class="btn-whatsapp" href="${waUrl}" target="_blank" rel="noopener">💬 Apri chat WhatsApp</a>` : ""}
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Note sessione</label>
+          <textarea rows="3" placeholder="Scrivi qui le note per questa sessione..." oninput="saveDayNote('${noteKey}', this.value)">${escapeHtml(dayNotes[noteKey] || "")}</textarea>
+        </div>
+      `;
+      container.appendChild(box);
+    });
+
+    if (diaryEvents.length > 0) {
+      const dBox = document.createElement("div");
+      dBox.className = "diary-block";
+      let checksHtml = `<div style="font-weight:700; font-size:14px; margin-bottom:8px;">🌙 Diari del Sonno previsti oggi</div>`;
+      diaryEvents.forEach((ev) => {
+        const checked = checks[ev.checkKey] ? "checked" : "";
+        checksHtml += `
+          <label class="check-row">
+            <input type="checkbox" ${checked} onchange="toggleCheck('${ev.checkKey}', this.checked)" />
+            <span style="color:${ev.subject.color};">●</span>
+            <span>${escapeHtml(ev.subject.code || "")} ${escapeHtml(ev.subject.name)} — Diario ${ev.diaryDay}/3 (S${ev.sessionNum})</span>
+          </label>
+        `;
+      });
+
+      let optionsHtml = "";
+      diaryEvents.forEach((ev) => {
+        const label = `${ev.subject.code || ev.subject.name} · Diario ${ev.diaryDay}/3`;
+        optionsHtml += `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`;
+      });
+
+      const dayReminders = reminders.filter((r) => r.date === isoStr);
+      let remListHtml = "";
+      if (dayReminders.length > 0) {
+        remListHtml = `<div style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">`;
+        dayReminders.forEach((r) => {
+          remListHtml += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#f5f5f7; padding:6px 10px; border-radius:8px; font-size:12.5px;">
+              <span>⏰ <strong>${r.time}</strong> — ${escapeHtml(r.label)}</span>
+              <button class="btn btn-sm btn-danger" style="padding:2px 7px;" onclick="deleteReminder('${r.id}')">✕</button>
+            </div>
+          `;
+        });
+        remListHtml += `</div>`;
+      }
+
+      dBox.innerHTML = checksHtml + `
+        <div class="reminder-box">
+          <div style="font-weight:700; font-size:13px;">🔔 Imposta promemoria diario</div>
+          <div class="reminder-controls">
+            <select id="remDiarySelect">${optionsHtml}</select>
+            <input type="time" id="remTimeInput" value="21:00" />
+            <button type="button" class="btn btn-primary btn-sm" onclick="addDiaryReminder('${isoStr}')">Salva nel Planner</button>
+            <button type="button" class="btn btn-sm" onclick="exportSingleIcs('${isoStr}')">📲 Suona su iPhone (.ics)</button>
+          </div>
+          ${remListHtml}
+        </div>
+      `;
+      container.appendChild(dBox);
+    }
+
+    openModal("dayModal");
+  }
+
+  function toggleCheck(key, val) {
+    checks[key] = val;
+    saveAll();
+    renderSubjectsStrip();
+    renderCalendar();
+  }
+
+  function saveDayNote(key, val) {
+    dayNotes[key] = val;
+    saveAll();
+  }
+
+  function addDiaryReminder(isoStr) {
+    const label = document.getElementById("remDiarySelect").value;
+    const time = document.getElementById("remTimeInput").value;
+    if (!time) return alert("Seleziona un orario.");
+    reminders.push({
+      id: "rem_" + Date.now(),
+      date: isoStr,
+      time,
+      label
+    });
+    saveAll();
+    openDayModal(isoStr);
+  }
+
+  function deleteReminder(id) {
+    reminders = reminders.filter((r) => r.id !== id);
+    saveAll();
+    if (activeDayStr) openDayModal(activeDayStr);
+  }
+
+  function exportSingleIcs(isoStr) {
+    const label = document.getElementById("remDiarySelect").value;
+    const time = document.getElementById("remTimeInput").value || "21:00";
+    const [hh, mm] = time.split(":");
+    const cleanDate = isoStr.replace(/-/g, "");
+    const dtStart = `${cleanDate}T${hh}${mm}00`;
+    const dtEnd = `${cleanDate}T${hh}${String(Math.min(59, Number(mm) + 15)).padStart(2, "0")}00`;
+    const link = filesData.diary || "";
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//MORFEO Thesis Planner//IT",
+      "BEGIN:VEVENT",
+      `UID:morfeo-${Date.now()}@thesisplanner`,
+      `DTSTAMP:${cleanDate}T080000Z`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `SUMMARY:🌙 Diario del Sonno · ${label}`,
+      `DESCRIPTION:Invia o compila il Diario del Sonno (${label}). ${link}`,
+      "BEGIN:VALARM",
+      "TRIGGER:-PT0M",
+      "ACTION:DISPLAY",
+      `DESCRIPTION:Promemoria Diario del Sonno: ${label}`,
+      "END:VALARM",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\n");
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `promemoria_diario_${isoStr}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  setInterval(() => {
+    const now = new Date();
+    const todayISO = formatDateISO(now);
+    const hhmm = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    const match = reminders.find((r) => r.date === todayISO && r.time === hhmm);
+    if (match && lastTriggeredReminder !== match.id + "_" + hhmm) {
+      lastTriggeredReminder = match.id + "_" + hhmm;
+      showAlarmPopup(`È l'ora (${match.time}) per: ${match.label}! Ricordati di inviare o far compilare il diario.`);
+    }
+  }, 15000);
+
+  function showAlarmPopup(text) {
+    document.getElementById("alarmPopupText").textContent = text;
+    document.getElementById("alarmPopup").classList.add("open");
+  }
+  function closeAlarmPopup() {
+    document.getElementById("alarmPopup").classList.remove("open");
+  }
+  function snoozeAlarm() {
+    closeAlarmPopup();
+    setTimeout(() => {
+      showAlarmPopup("Posticipo terminato! Ricordati il Diario del Sonno di oggi.");
+    }, 10 * 60 * 1000);
+  }
+
+  function renderSwatches() {
+    const wrap = document.getElementById("colorSwatches");
+    wrap.innerHTML = "";
+    PALETTE.forEach((c) => {
+      const el = document.createElement("div");
+      el.className = "swatch" + (selectedSwatchColor === c ? " active" : "");
+      el.style.background = c;
+      el.addEventListener("click", () => {
+        selectedSwatchColor = c;
+        renderSwatches();
+      });
+      wrap.appendChild(el);
+    });
+  }
+
+  function suggestNextCode() {
+    const nextNum = subjects.length + 1;
+    return "S" + String(nextNum).padStart(2, "0");
+  }
+
+  document.getElementById("btnNewSubject").addEventListener("click", () => {
+    document.getElementById("subjectModalTitle").textContent = "Nuovo Soggetto";
+    document.getElementById("editSubjectId").value = "";
+    document.getElementById("subjCode").value = suggestNextCode();
+    document.getElementById("subjName").value = "";
+    document.getElementById("subjPhone").value = "";
+    document.getElementById("s1Date").value = formatDateISO(new Date());
+    document.getElementById("s1Cond").value = "BB";
+    document.getElementById("s2Date").value = "";
+    document.getElementById("s2Cond").value = "SH";
+    document.getElementById("subjNotes").value = "";
+    selectedSwatchColor = PALETTE[subjects.length % PALETTE.length];
+    document.getElementById("btnDeleteSubject").style.display = "none";
+    renderSwatches();
+    openModal("subjectModal");
+  });
+
+  function openEditSubject(id) {
+    const s = subjects.find((x) => x.id === id);
+    if (!s) return;
+    document.getElementById("subjectModalTitle").textContent = "Modifica Soggetto";
+    document.getElementById("editSubjectId").value = s.id;
+    document.getElementById("subjCode").value = s.code || "";
+    document.getElementById("subjName").value = s.name;
+    document.getElementById("subjPhone").value = s.phone || "";
+    document.getElementById("s1Date").value = s.s1Date || "";
+    document.getElementById("s1Cond").value = s.s1Cond || "BB";
+    document.getElementById("s2Date").value = s.s2Date || "";
+    document.getElementById("s2Cond").value = s.s2Cond || "SH";
+    document.getElementById("subjNotes").value = s.notes || "";
+    selectedSwatchColor = s.color || PALETTE[0];
+    const delBtn = document.getElementById("btnDeleteSubject");
+    delBtn.style.display = "inline-flex";
+    delBtn.onclick = () => {
+      if (confirm(`Eliminare ${s.name}?`)) {
+        subjects = subjects.filter((x) => x.id !== id);
+        if (selectedSubjectFilter === id) selectedSubjectFilter = null;
+        saveAll();
+        closeModal("subjectModal");
+        renderAll();
+      }
+    };
+    renderSwatches();
+    openModal("subjectModal");
+  }
+
+  document.getElementById("subjectForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const editId = document.getElementById("editSubjectId").value;
+    const payload = {
+      id: editId || "subj_" + Date.now(),
+      code: document.getElementById("subjCode").value.trim(),
+      name: document.getElementById("subjName").value.trim(),
+      phone: document.getElementById("subjPhone").value.trim(),
+      s1Date: document.getElementById("s1Date").value,
+      s1Cond: document.getElementById("s1Cond").value,
+      s2Date: document.getElementById("s2Date").value,
+      s2Cond: document.getElementById("s2Cond").value,
+      color: selectedSwatchColor,
+      notes: document.getElementById("subjNotes").value.trim()
+    };
+
+    if (editId) {
+      subjects = subjects.map((s) => (s.id === editId ? payload : s));
+    } else {
+      subjects.push(payload);
+    }
+    saveAll();
+    closeModal("subjectModal");
+    renderAll();
+  });
+
+  function openAllSubjectsModal() {
+    const list = document.getElementById("allSubjectsList");
+    if (subjects.length === 0) {
+      list.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessun soggetto reclutato al momento. Clicca su <strong>+ Nuovo Soggetto</strong> per iniziare.</p>`;
+    } else {
+      list.innerHTML = "";
+      subjects.forEach((s) => {
+        const done = isSubjectCompleted(s);
+        const { done: dCount, total: tCount } = getSubjectCompletion(s);
+        const item = document.createElement("div");
+        item.className = "all-subj-item";
+        item.style.borderLeftColor = s.color;
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div>
+              <strong>${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
+              ${s.phone ? `<span style="font-size:12.5px; color:var(--text-muted); margin-left:8px;">📱 ${escapeHtml(s.phone)}</span>` : ""}
+            </div>
+            <span class="status-pill ${done ? "status-done" : "status-active"}">${done ? "✓ Già fatto" : `In corso (${dCount}/${tCount})`}</span>
+          </div>
+          <div style="font-size:12.5px; color:var(--text-muted); margin-top:6px;">
+            S1: <strong>${formatItShort(s.s1Date)}</strong> (${s.s1Cond}) &nbsp;·&nbsp; S2: <strong>${formatItShort(s.s2Date)}</strong> (${s.s2Cond})
+          </div>
+          ${s.notes ? `<div style="font-size:12.5px; margin-top:6px; background:#f8f8fa; padding:6px 8px; border-radius:6px;">📝 ${escapeHtml(s.notes)}</div>` : ""}
+          <div style="display:flex; gap:8px; margin-top:9px;">
+            <button class="btn btn-sm" onclick="selectedSubjectFilter='${s.id}'; closeModal('allSubjectsModal'); renderAll();">Filtra sul calendario</button>
+            <button class="btn btn-sm" onclick="closeModal('allSubjectsModal'); openEditSubject('${s.id}');">Modifica</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+    openModal("allSubjectsModal");
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add("open"); }
+  function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  document.getElementById("btnPrevMonth").addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+    renderCalendar();
+  });
+  document.getElementById("btnNextMonth").addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+    renderCalendar();
+  });
+  document.getElementById("btnToday").addEventListener("click", () => {
+    currentMonthDate = new Date();
+    currentMonthDate.setDate(1);
+    renderCalendar();
+  });
+
+  function renderAll() {
+    renderSubjectsStrip();
+    renderCalendar();
+  }
+
+  initEditableHeader();
+  initFilesDropdown();
+  renderAll();
+</script>
+</body>
+</html>
