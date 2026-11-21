@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>MORFEO · iPhone Planner</title>
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --surface: #ffffff;
+    --surface-soft: #f9f9fb;
+    --text: #1c1c1e;
+    --text-muted: #6e6e73;
+    --border: #d1d1d6;
+    --border-strong: #8e8e93;
+    --accent: #007aff;
+    --accent-soft: #eaf3ff;
+    --bb-bg: #eef2ff;
+    --bb-text: #3730a3;
+    --sh-bg: #fff7ed;
+    --sh-text: #9a3412;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: calc(10px + env(safe-area-inset-top)) 10px calc(28px + env(safe-area-inset-bottom));
+  }
+
+  /* Header iPhone */
+  .topbar {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 13px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .title-area { flex: 1; min-width: 0; }
+  h1#studyTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  p#studySubtitle {
+    margin: 3px 0 0;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+  .inline-edit-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 4px 7px;
+  }
+
+  .header-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    min-height: 36px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-sm { min-height: 32px; padding: 4px 9px; font-size: 12px; border-radius: 8px; }
+  .btn-danger { color: #ff3b30; border-color: #ffb4af; }
+
+  /* File Utili iPhone Dropdown */
+  .files-dropdown {
+    display: none;
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .files-dropdown.open { display: block; }
+  .file-item {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--surface-soft);
+  }
+  .file-item:last-child { margin-bottom: 0; }
+  .file-item label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+  .file-item input, .file-item textarea {
+    width: 100%;
+    font-size: 15px;
+    font-family: inherit;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 9px;
+    background: #fff;
+  }
+  .file-row-btns {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    justify-content: flex-end;
+  }
+
+  /* Soggetti Reclutati iPhone */
+  .subjects-box {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 11px;
+    margin-bottom: 10px;
+  }
+  .sec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .sec-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .subjects-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 3px;
+  }
+  .subjects-scroll::-webkit-scrollbar { display: none; }
+
+  .all-card-mobile {
+    min-width: 128px;
+    background: var(--surface-soft);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 9px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .all-card-mobile.active { border: 2px solid var(--accent); background: var(--accent-soft); }
+
+  .subj-card-mobile {
+    min-width: 172px;
+    max-width: 185px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-left-width: 4px;
+    border-radius: 11px;
+    padding: 8px 10px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .subj-card-mobile.selected { box-shadow: 0 0 0 2px var(--accent); background: #f7fbff; }
+
+  .code-chip {
+    font-size: 10px;
+    font-weight: 800;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 5px;
+    display: inline-block;
+  }
+  .m-subj-name {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .m-cond-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    background: var(--surface-soft);
+    border: 1px solid #e5e5ea;
+    border-radius: 6px;
+    padding: 3px 6px;
+  }
+  .tag-bb { background: var(--bb-bg); color: var(--bb-text); font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+  .tag-sh { background: var(--sh-bg); color: var(--sh-text); font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+
+  /* Calendar iPhone Grid */
+  .cal-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 8px 12px;
+  }
+  .cal-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px 10px;
+  }
+  .cal-title {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  .weekdays-7 {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .wd {
+    text-align: center;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .grid-7 {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .m-cell {
+    min-height: 66px;
+    background: #fff;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 8px;
+    padding: 3px 3px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+  .m-cell.other { opacity: 0.45; background: #fafafa; }
+  .m-cell.today .m-num {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0 5px;
+  }
+  .m-cell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .m-pill {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 3px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.15;
+  }
+  .m-pill-diary {
+    background: rgba(255,255,255,0.92);
+    border: 1px dashed currentColor;
+  }
+  .m-pill-sess {
+    background: rgba(255,255,255,0.96);
+    color: #1c1c1e !important;
+    font-weight: 800;
+  }
+
+  /* iOS Bottom Sheet Modals */
+  .sheet-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.42);
+    z-index: 1000;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .sheet-backdrop.open { display: flex; }
+
+  .bottom-sheet {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 10px 16px calc(22px + env(safe-area-inset-bottom));
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.18);
+    animation: slideUp 0.22s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .sheet-grabber {
+    width: 38px;
+    height: 4px;
+    background: #d1d1d6;
+    border-radius: 999px;
+    margin: 0 auto 10px;
+  }
+  .sheet-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ececef;
+  }
+  .sheet-head h3 { margin: 0; font-size: 16px; }
+  .x-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: #f2f2f7;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .f-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .f-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .f-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .f-group input, .f-group select, .f-group textarea {
+    width: 100%;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 10px;
+    background: #fff;
+  }
+
+  .swatches-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sw-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2.5px solid transparent;
+  }
+  .sw-dot.active { border-color: #1c1c1e; transform: scale(1.08); }
+
+  /* Session Essential Card */
+  .sess-box {
+    border: 1.5px solid var(--border);
+    border-left-width: 5px;
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--surface-soft);
+    margin-bottom: 10px;
+  }
+  .wa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    min-height: 42px;
+    background: #25d366;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    margin: 10px 0;
+  }
+
+  /* Diary Box */
+  .diary-card {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 12px;
+    background: #fff;
+  }
+  .chk-line {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .chk-line input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+  /* Alarm Banner */
+  .alarm-banner {
+    display: none;
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top));
+    left: 10px;
+    right: 10px;
+    max-width: 460px;
+    margin: 0 auto;
+    background: #fff;
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    z-index: 2000;
+  }
+  .alarm-banner.open { display: block; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="title-area">
+      <h1 id="studyTitle">MORFEO · Thesis Planner ✏️</h1>
+      <p id="studySubtitle">Tocca per personalizzare · Sessioni & Diari</p>
+    </div>
+    <div class="header-stack">
+      <button class="btn btn-primary" id="btnNewSubject">+ Nuovo Soggetto</button>
+      <button class="btn" id="btnToggleFiles">📁 File Utili ▾</button>
+    </div>
+  </header>
+
+  <!-- FILE UTILI -->
+  <section class="files-dropdown" id="filesDropdown">
+    <div class="file-item">
+      <label>1. Link Diario del Sonno</label>
+      <input type="url" id="linkDiaryInput" placeholder="https://..." />
+      <div class="file-row-btns">
+        <button class="btn btn-sm" onclick="copyField('linkDiaryInput')">Copia</button>
+        <button class="btn btn-sm" onclick="openUrlField('linkDiaryInput')">Apri ↗</button>
+      </div>
+    </div>
+    <div class="file-item">
+      <label>2. Link Questionario Reclutamento</label>
+      <input type="url" id="linkRecruitInput" placeholder="https://..." />
+      <div class="file-row-btns">
+        <button class="btn btn-sm" onclick="copyField('linkRecruitInput')">Copia</button>
+        <button class="btn btn-sm" onclick="openUrlField('linkRecruitInput')">Apri ↗</button>
+      </div>
+    </div>
+    <div class="file-item">
+      <label>3. Note · Testo messaggi</label>
+      <textarea id="msgNotesInput" rows="2" placeholder="Testo messaggio (usa {LINK} per il diario)..."></textarea>
+      <div class="file-row-btns">
+        <button class="btn btn-sm" onclick="copyMessageTemplate()">Copia messaggio</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOGGETTI RECLUTATI -->
+  <section class="subjects-box">
+    <div class="sec-header">
+      <span class="sec-label">Soggetti Reclutati</span>
+      <span style="font-size:10.5px; color:var(--text-muted);">┄ Diario · █ Sessione</span>
+    </div>
+    <div class="subjects-scroll" id="subjectsStrip"></div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section class="cal-card">
+    <div class="cal-bar">
+      <div class="cal-title" id="calMonthTitle"></div>
+      <div style="display:flex; gap:5px;">
+        <button class="btn btn-sm" id="btnPrevMonth">◀</button>
+        <button class="btn btn-sm" id="btnToday">Oggi</button>
+        <button class="btn btn-sm" id="btnNextMonth">▶</button>
+      </div>
+    </div>
+    <div class="weekdays-7">
+      <div class="wd">Lun</div>
+      <div class="wd">Mar</div>
+      <div class="wd">Mer</div>
+      <div class="wd">Gio</div>
+      <div class="wd">Ven</div>
+      <div class="wd">Sab</div>
+      <div class="wd">Dom</div>
+    </div>
+    <div class="grid-7" id="calGrid"></div>
+  </section>
+</div>
+
+<!-- BOTTOM SHEET: NUOVO / MODIFICA SOGGETTO -->
+<div class="sheet-backdrop" id="subjectModal">
+  <div class="bottom-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3 id="subjectModalTitle">Nuovo Soggetto</h3>
+      <button class="x-btn" onclick="closeModal('subjectModal')">✕</button>
+    </div>
+    <form id="subjectForm">
+      <input type="hidden" id="editSubjectId" />
+      <div class="f-row-2">
+        <div class="f-group">
+          <label>N. Soggetto *</label>
+          <input type="text" id="subjCode" placeholder="S01" required />
+        </div>
+        <div class="f-group">
+          <label>Nome e Cognome *</label>
+          <input type="text" id="subjName" placeholder="Marco Rossi" required />
+        </div>
+      </div>
+      <div class="f-group">
+        <label>Numero di cellulare (WhatsApp)</label>
+        <input type="tel" id="subjPhone" placeholder="+39 333 1234567" />
+      </div>
+      <div class="f-row-2">
+        <div class="f-group">
+          <label>Data Sessione 1 (S1)</label>
+          <input type="date" id="s1Date" required />
+        </div>
+        <div class="f-group">
+          <label>Condizione S1</label>
+          <select id="s1Cond">
+            <option value="BB">BB</option>
+            <option value="SH">SH</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-row-2">
+        <div class="f-group">
+          <label>Data Sessione 2 (S2)</label>
+          <input type="date" id="s2Date" />
+        </div>
+        <div class="f-group">
+          <label>Condizione S2</label>
+          <select id="s2Cond">
+            <option value="SH">SH</option>
+            <option value="BB">BB</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-group">
+        <label>Colore soggetto</label>
+        <div class="swatches-row" id="colorSwatches"></div>
+      </div>
+      <div class="f-group">
+        <label>Note sul soggetto</label>
+        <textarea id="subjNotes" rows="2" placeholder="Note aggiuntive..."></textarea>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="btn btn-danger" id="btnDeleteSubject" style="display:none;">Elimina</button>
+        <button type="submit" class="btn btn-primary" style="flex:1; min-height:44px; font-size:15px;">Salva Soggetto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- BOTTOM SHEET: GIORNO -->
+<div class="sheet-backdrop" id="dayModal">
+  <div class="bottom-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3 id="dayModalTitle">Dettaglio Giorno</h3>
+      <button class="x-btn" onclick="closeModal('dayModal')">✕</button>
+    </div>
+    <div id="dayModalContent"></div>
+  </div>
+</div>
+
+<!-- BOTTOM SHEET: TUTTI I SOGGETTI -->
+<div class="sheet-backdrop" id="allSubjectsModal">
+  <div class="bottom-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3>Tutti i Soggetti Reclutati</h3>
+      <button class="x-btn" onclick="closeModal('allSubjectsModal')">✕</button>
+    </div>
+    <div id="allSubjectsList"></div>
+  </div>
+</div>
+
+<!-- ALARM BANNER -->
+<div class="alarm-banner" id="alarmPopup">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+    <strong>⏰ Promemoria Diario del Sonno!</strong>
+    <button class="x-btn" style="width:26px;height:26px;font-size:13px;" onclick="closeAlarmPopup()">✕</button>
+  </div>
+  <p id="alarmPopupText" style="margin:0 0 10px; font-size:13px; color:#3a3a3c;"></p>
+  <div style="display:flex; gap:8px;">
+    <button class="btn btn-primary btn-sm" style="flex:1;" onclick="copyMessageTemplate()">📋 Copia messaggio</button>
+    <button class="btn btn-sm" onclick="snoozeAlarm()">💤 +10m</button>
+  </div>
+</div>
+
+<script>
+  const PALETTE = [
+    "#007aff", "#34c759", "#ff9500", "#af52de",
+    "#ff2d55", "#00c7be", "#ff3b30", "#5856d6"
+  ];
+
+  const STORAGE_KEYS = {
+    SUBJECTS: "morfeo_v3_subjects",
+    CHECKS: "morfeo_v3_checks",
+    NOTES: "morfeo_v3_day_notes",
+    REMINDERS: "morfeo_v3_reminders",
+    FILES: "morfeo_v3_files",
+    TITLE: "morfeo_v3_title",
+    SUBTITLE: "morfeo_v3_subtitle"
+  };
+
+  let subjects = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUBJECTS) || "[]");
+  let checks = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHECKS) || "{}");
+  let dayNotes = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES) || "{}");
+  let reminders = JSON.parse(localStorage.getItem(STORAGE_KEYS.REMINDERS) || "[]");
+  let filesData = JSON.parse(localStorage.getItem(STORAGE_KEYS.FILES) || '{"diary":"","recruit":"","msg":""}');
+
+  let currentMonthDate = new Date();
+  currentMonthDate.setDate(1);
+  let selectedSubjectFilter = null;
+  let selectedSwatchColor = PALETTE[0];
+  let activeDayStr = null;
+  let lastTriggeredReminder = null;
+
+  function saveAll() {
+    localStorage.setItem(STORAGE_KEYS.SUBJECTS, JSON.stringify(subjects));
+    localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(checks));
+    localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(dayNotes));
+    localStorage.setItem(STORAGE_KEYS.REMINDERS, JSON.stringify(reminders));
+    localStorage.setItem(STORAGE_KEYS.FILES, JSON.stringify(filesData));
+  }
+
+  function formatDateISO(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+  function parseISO(str) {
+    const [y, m, d] = str.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  function addDays(isoStr, delta) {
+    const d = parseISO(isoStr);
+    d.setDate(d.getDate() + delta);
+    return formatDateISO(d);
+  }
+  function formatItShort(isoStr) {
+    if (!isoStr) return "—";
+    const [, m, d] = isoStr.split("-");
+    return `${d}/${m}`;
+  }
+  function formatItFull(isoStr) {
+    return parseISO(isoStr).toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "long" });
+  }
+
+  function initEditableHeader() {
+    const tEl = document.getElementById("studyTitle");
+    const sEl = document.getElementById("studySubtitle");
+    if (localStorage.getItem(STORAGE_KEYS.TITLE)) tEl.textContent = localStorage.getItem(STORAGE_KEYS.TITLE);
+    if (localStorage.getItem(STORAGE_KEYS.SUBTITLE)) sEl.textContent = localStorage.getItem(STORAGE_KEYS.SUBTITLE);
+
+    const bind = (el, key) => {
+      el.addEventListener("click", () => {
+        if (el.querySelector("input")) return;
+        const prev = el.textContent.replace(" ✏️", "");
+        const inp = document.createElement("input");
+        inp.className = "inline-edit-input";
+        inp.value = prev;
+        el.textContent = "";
+        el.appendChild(inp);
+        inp.focus();
+        const done = () => {
+          const v = inp.value.trim() || prev;
+          el.textContent = v;
+          localStorage.setItem(key, v);
+        };
+        inp.addEventListener("blur", done);
+        inp.addEventListener("keydown", (e) => { if (e.key === "Enter") done(); });
+      });
+    };
+    bind(tEl, STORAGE_KEYS.TITLE);
+    bind(sEl, STORAGE_KEYS.SUBTITLE);
+  }
+
+  function initFilesDropdown() {
+    const dI = document.getElementById("linkDiaryInput");
+    const rI = document.getElementById("linkRecruitInput");
+    const mI = document.getElementById("msgNotesInput");
+    dI.value = filesData.diary || "";
+    rI.value = filesData.recruit || "";
+    mI.value = filesData.msg || "";
+    const sync = () => {
+      filesData = { diary: dI.value.trim(), recruit: rI.value.trim(), msg: mI.value };
+      saveAll();
+    };
+    dI.addEventListener("input", sync);
+    rI.addEventListener("input", sync);
+    mI.addEventListener("input", sync);
+    document.getElementById("btnToggleFiles").addEventListener("click", () => {
+      document.getElementById("filesDropdown").classList.toggle("open");
+    });
+  }
+
+  function copyField(id) {
+    const v = document.getElementById(id).value.trim();
+    if (!v) return alert("Campo vuoto.");
+    navigator.clipboard.writeText(v);
+    alert("Copiato!");
+  }
+  function openUrlField(id) {
+    const v = document.getElementById(id).value.trim();
+    if (!v) return alert("Inserisci un link.");
+    window.open(v.startsWith("http") ? v : "https://" + v, "_blank");
+  }
+  function copyMessageTemplate() {
+    const link = filesData.diary || "[Link Diario]";
+    const raw = filesData.msg && filesData.msg.trim()
+      ? filesData.msg
+      : "Ciao! Ti ricordo di compilare il Diario del Sonno di oggi: {LINK}";
+    const out = raw.includes("{LINK}") ? raw.replace(/\{LINK\}/g, link) : `${raw}
+${link}`;
+    navigator.clipboard.writeText(out);
+    alert("Messaggio copiato!");
+  }
+
+  function getScheduleEvents() {
+    const events = [];
+    subjects.forEach((s) => {
+      [{ num: 1, date: s.s1Date, cond: s.s1Cond }, { num: 2, date: s.s2Date, cond: s.s2Cond }].forEach((sess) => {
+        if (!sess.date) return;
+        events.push({ type: "diary", diaryDay: 1, sessionNum: sess.num, cond: sess.cond, date: addDays(sess.date, -2), subject: s, checkKey: `${s.id}_S${sess.num}_D1` });
+        events.push({ type: "diary", diaryDay: 2, sessionNum: sess.num, cond: sess.cond, date: addDays(sess.date, -1), subject: s, checkKey: `${s.id}_S${sess.num}_D2` });
+        events.push({ type: "session", diaryDay: 3, sessionNum: sess.num, cond: sess.cond, date: sess.date, subject: s, checkKey: `${s.id}_S${sess.num}_D3` });
+      });
+    });
+    return events;
+  }
+
+  function getSubjectCompletion(subj) {
+    let total = 0, done = 0;
+    [1, 2].forEach((num) => {
+      const dt = num === 1 ? subj.s1Date : subj.s2Date;
+      if (dt) {
+        total += 3;
+        if (checks[`${subj.id}_S${num}_D1`]) done++;
+        if (checks[`${subj.id}_S${num}_D2`]) done++;
+        if (checks[`${subj.id}_S${num}_D3`]) done++;
+      }
+    });
+    return { done, total };
+  }
+
+  function renderSubjectsStrip() {
+    const strip = document.getElementById("subjectsStrip");
+    strip.innerHTML = "";
+
+    const allCard = document.createElement("div");
+    allCard.className = "all-card-mobile" + (selectedSubjectFilter === null ? " active" : "");
+    allCard.innerHTML = `
+      <div>
+        <div style="font-size:12.5px; font-weight:700;">👥 Tutti</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${subjects.length} soggetti</div>
+      </div>
+      <button class="btn btn-sm" style="margin-top:8px; width:100%;" onclick="event.stopPropagation(); openAllSubjectsModal()">Lista completa</button>
+    `;
+    allCard.addEventListener("click", () => { selectedSubjectFilter = null; renderAll(); });
+    strip.appendChild(allCard);
+
+    subjects.forEach((s) => {
+      const { done, total } = getSubjectCompletion(s);
+      const card = document.createElement("div");
+      card.className = "subj-card-mobile" + (selectedSubjectFilter === s.id ? " selected" : "");
+      card.style.borderLeftColor = s.color;
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="code-chip" style="background:${s.color};">${escapeHtml(s.code || "SOGG")}</span>
+          <span style="font-size:10.5px; font-weight:700; color:var(--text-muted);">${done}/${total} <span onclick="event.stopPropagation(); openEditSubject('${s.id}')" style="padding-left:4px;">✏️</span></span>
+        </div>
+        <div class="m-subj-name">${escapeHtml(s.name)}</div>
+        <div class="m-cond-row">
+          <span>S1 ${formatItShort(s.s1Date)}</span>
+          <span class="${s.s1Cond === "BB" ? "tag-bb" : "tag-sh"}">${s.s1Cond}</span>
+        </div>
+        <div class="m-cond-row">
+          <span>S2 ${formatItShort(s.s2Date)}</span>
+          <span class="${s.s2Cond === "BB" ? "tag-bb" : "tag-sh"}">${s.s2Cond}</span>
+        </div>
+      `;
+      card.addEventListener("click", () => {
+        selectedSubjectFilter = selectedSubjectFilter === s.id ? null : s.id;
+        renderAll();
+      });
+      strip.appendChild(card);
+    });
+  }
+
+  function renderCalendar() {
+    const year = currentMonthDate.getFullYear();
+    const month = currentMonthDate.getMonth();
+    document.getElementById("calMonthTitle").textContent = currentMonthDate.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
+
+    const grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+    const firstDay = new Date(year, month, 1);
+    let offset = firstDay.getDay() - 1;
+    if (offset < 0) offset = 6;
+    const start = new Date(year, month, 1 - offset);
+    const todayISO = formatDateISO(new Date());
+
+    let events = getScheduleEvents();
+    if (selectedSubjectFilter) events = events.filter((e) => e.subject.id === selectedSubjectFilter);
+
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const iso = formatDateISO(d);
+      const dayEvs = events.filter((e) => e.date === iso);
+      const sessEvs = dayEvs.filter((e) => e.type === "session");
+      const diaryEvs = dayEvs.filter((e) => e.type === "diary");
+
+      const cell = document.createElement("div");
+      cell.className = "m-cell" + (d.getMonth() !== month ? " other" : "") + (iso === todayISO ? " today" : "");
+
+      if (sessEvs.length > 0) {
+        const c1 = sessEvs[0].subject.color;
+        cell.style.background = sessEvs.length === 1 ? c1 : `linear-gradient(135deg, ${c1} 50%, ${sessEvs[1].subject.color} 50%)`;
+        cell.style.borderColor = c1;
+        cell.style.color = "#fff";
+      } else if (diaryEvs.length > 0) {
+        cell.style.border = `1.5px dashed ${diaryEvs[0].subject.color}`;
+      }
+
+      const top = document.createElement("div");
+      top.className = "m-cell-top";
+      top.innerHTML = `<span class="m-num">${d.getDate()}</span>`;
+      cell.appendChild(top);
+
+      dayEvs.forEach((ev) => {
+        const p = document.createElement("div");
+        const code = ev.subject.code || ev.subject.name.slice(0, 4);
+        const chk = checks[ev.checkKey] ? "✓" : "";
+        if (ev.type === "session") {
+          p.className = "m-pill m-pill-sess";
+          p.textContent = `${code}·${ev.cond}${chk}`;
+        } else {
+          p.className = "m-pill m-pill-diary";
+          p.style.color = ev.subject.color;
+          p.textContent = `${code}·D${ev.diaryDay}${chk}`;
+        }
+        cell.appendChild(p);
+      });
+
+      cell.addEventListener("click", () => openDayModal(iso));
+      grid.appendChild(cell);
+    }
+  }
+
+  function openDayModal(isoStr) {
+    activeDayStr = isoStr;
+    document.getElementById("dayModalTitle").textContent = formatItFull(isoStr);
+    const body = document.getElementById("dayModalContent");
+    body.innerHTML = "";
+
+    const dayEvs = getScheduleEvents().filter((e) => e.date === isoStr);
+    const sessEvs = dayEvs.filter((e) => e.type === "session");
+    const diaryEvs = dayEvs.filter((e) => e.type === "diary");
+
+    if (dayEvs.length === 0) {
+      body.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessun evento in questa data.</p>`;
+    }
+
+    // Essential Session View (Name/Surname, Phone, Condition BB/SH, WhatsApp button, Notes)
+    sessEvs.forEach((ev) => {
+      const s = ev.subject;
+      const noteKey = `sess_${s.id}_${isoStr}`;
+      const cleanPhone = (s.phone || "").replace(/[^0-9]/g, "");
+      const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "";
+      const condBadge = ev.cond === "BB"
+        ? `<span class="tag-bb" style="font-size:12px; padding:3px 8px;">BB</span>`
+        : `<span class="tag-sh" style="font-size:12px; padding:3px 8px;">SHAM</span>`;
+
+      const box = document.createElement("div");
+      box.className = "sess-box";
+      box.style.borderLeftColor = s.color;
+      box.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <strong style="font-size:16px;">${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
+          ${condBadge}
+        </div>
+        <div style="font-size:13.5px; color:var(--text-muted); margin-top:4px;">📱 ${s.phone ? escapeHtml(s.phone) : "Nessun numero"}</div>
+        ${waUrl ? `<a class="wa-btn" href="${waUrl}" target="_blank" rel="noopener">💬 Apri chat WhatsApp</a>` : ""}
+        <div class="f-group" style="margin-bottom:0; margin-top:8px;">
+          <label>Note</label>
+          <textarea rows="3" placeholder="Scrivi note..." oninput="saveDayNote('${noteKey}', this.value)">${escapeHtml(dayNotes[noteKey] || "")}</textarea>
+        </div>
+      `;
+      body.appendChild(box);
+    });
+
+    // Diary Days View
+    if (diaryEvs.length > 0) {
+      const dCard = document.createElement("div");
+      dCard.className = "diary-card";
+      let html = `<div style="font-weight:700; font-size:14px; margin-bottom:6px;">🌙 Diario del Sonno</div>`;
+      let opts = "";
+      diaryEvs.forEach((ev) => {
+        const lbl = `${ev.subject.code || ev.subject.name} · Diario ${ev.diaryDay}/3`;
+        opts += `<option value="${escapeHtml(lbl)}">${escapeHtml(lbl)}</option>`;
+        html += `
+          <label class="chk-line">
+            <input type="checkbox" ${checks[ev.checkKey] ? "checked" : ""} onchange="toggleCheck('${ev.checkKey}', this.checked)" />
+            <span>${escapeHtml(lbl)}</span>
+          </label>
+        `;
+      });
+
+      const dayRems = reminders.filter((r) => r.date === isoStr);
+      let remHtml = "";
+      dayRems.forEach((r) => {
+        remHtml += `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f2f2f7; padding:6px 9px; border-radius:8px; font-size:12.5px; margin-top:6px;">
+            <span>⏰ <strong>${r.time}</strong> · ${escapeHtml(r.label)}</span>
+            <button class="btn btn-sm btn-danger" onclick="deleteReminder('${r.id}')">✕</button>
+          </div>
+        `;
+      });
+
+      html += `
+        <div style="border-top:1px solid #ececef; margin-top:10px; padding-top:10px;">
+          <div style="font-weight:700; font-size:13px; margin-bottom:6px;">🔔 Imposta promemoria diario</div>
+          <div class="f-group">
+            <select id="remDiarySelect">${opts}</select>
+          </div>
+          <div class="f-row-2">
+            <div class="f-group"><input type="time" id="remTimeInput" value="21:00" /></div>
+            <button type="button" class="btn btn-primary" onclick="addDiaryReminder('${isoStr}')">Salva nel Planner</button>
+          </div>
+          <button type="button" class="btn" style="width:100%; margin-top:4px;" onclick="exportSingleIcs('${isoStr}')">📲 Suona su iPhone (Calendario)</button>
+          ${remHtml}
+        </div>
+      `;
+      dCard.innerHTML = html;
+      body.appendChild(dCard);
+    }
+
+    openModal("dayModal");
+  }
+
+  function toggleCheck(k, v) { checks[k] = v; saveAll(); renderAll(); }
+  function saveDayNote(k, v) { dayNotes[k] = v; saveAll(); }
+
+  function addDiaryReminder(isoStr) {
+    const label = document.getElementById("remDiarySelect").value;
+    const time = document.getElementById("remTimeInput").value;
+    if (!time) return;
+    reminders.push({ id: "rem_" + Date.now(), date: isoStr, time, label });
+    saveAll();
+    openDayModal(isoStr);
+  }
+  function deleteReminder(id) {
+    reminders = reminders.filter((r) => r.id !== id);
+    saveAll();
+    if (activeDayStr) openDayModal(activeDayStr);
+  }
+
+  function exportSingleIcs(isoStr) {
+    const label = document.getElementById("remDiarySelect").value;
+    const time = document.getElementById("remTimeInput").value || "21:00";
+    const [hh, mm] = time.split(":");
+    const cleanDate = isoStr.replace(/-/g, "");
+    const dtStart = `${cleanDate}T${hh}${mm}00`;
+    const dtEnd = `${cleanDate}T${hh}${String(Math.min(59, Number(mm) + 15)).padStart(2, "0")}00`;
+    const ics = [
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MORFEO iPhone//IT",
+      "BEGIN:VEVENT", `UID:morfeo-${Date.now()}@iphone`,
+      `DTSTAMP:${cleanDate}T080000Z`, `DTSTART:${dtStart}`, `DTEND:${dtEnd}`,
+      `SUMMARY:🌙 Diario del Sonno · ${label}`,
+      `DESCRIPTION:Compila o invia il Diario del Sonno (${label}). ${filesData.diary || ""}`,
+      "BEGIN:VALARM", "TRIGGER:-PT0M", "ACTION:DISPLAY", `DESCRIPTION:${label}`, "END:VALARM",
+      "END:VEVENT", "END:VCALENDAR"
+    ].join("
+");
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `diario_${isoStr}.ics`;
+    a.click();
+  }
+
+  setInterval(() => {
+    const now = new Date();
+    const todayISO = formatDateISO(now);
+    const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const match = reminders.find((r) => r.date === todayISO && r.time === hhmm);
+    if (match && lastTriggeredReminder !== match.id + "_" + hhmm) {
+      lastTriggeredReminder = match.id + "_" + hhmm;
+      document.getElementById("alarmPopupText").textContent = `Sono le ${match.time}: ricordati ${match.label}!`;
+      document.getElementById("alarmPopup").classList.add("open");
+    }
+  }, 15000);
+
+  function closeAlarmPopup() { document.getElementById("alarmPopup").classList.remove("open"); }
+  function snoozeAlarm() {
+    closeAlarmPopup();
+    setTimeout(() => {
+      document.getElementById("alarmPopupText").textContent = "Posticipo terminato! Ricordati il Diario del Sonno.";
+      document.getElementById("alarmPopup").classList.add("open");
+    }, 10 * 60 * 1000);
+  }
+
+  function renderSwatches() {
+    const wrap = document.getElementById("colorSwatches");
+    wrap.innerHTML = "";
+    PALETTE.forEach((c) => {
+      const d = document.createElement("div");
+      d.className = "sw-dot" + (selectedSwatchColor === c ? " active" : "");
+      d.style.background = c;
+      d.onclick = () => { selectedSwatchColor = c; renderSwatches(); };
+      wrap.appendChild(d);
+    });
+  }
+
+  document.getElementById("btnNewSubject").addEventListener("click", () => {
+    document.getElementById("subjectModalTitle").textContent = "Nuovo Soggetto";
+    document.getElementById("editSubjectId").value = "";
+    document.getElementById("subjCode").value = "S" + String(subjects.length + 1).padStart(2, "0");
+    document.getElementById("subjName").value = "";
+    document.getElementById("subjPhone").value = "";
+    document.getElementById("s1Date").value = formatDateISO(new Date());
+    document.getElementById("s1Cond").value = "BB";
+    document.getElementById("s2Date").value = "";
+    document.getElementById("s2Cond").value = "SH";
+    document.getElementById("subjNotes").value = "";
+    selectedSwatchColor = PALETTE[subjects.length % PALETTE.length];
+    document.getElementById("btnDeleteSubject").style.display = "none";
+    renderSwatches();
+    openModal("subjectModal");
+  });
+
+  function openEditSubject(id) {
+    const s = subjects.find((x) => x.id === id);
+    if (!s) return;
+    document.getElementById("subjectModalTitle").textContent = "Modifica Soggetto";
+    document.getElementById("editSubjectId").value = s.id;
+    document.getElementById("subjCode").value = s.code || "";
+    document.getElementById("subjName").value = s.name;
+    document.getElementById("subjPhone").value = s.phone || "";
+    document.getElementById("s1Date").value = s.s1Date || "";
+    document.getElementById("s1Cond").value = s.s1Cond || "BB";
+    document.getElementById("s2Date").value = s.s2Date || "";
+    document.getElementById("s2Cond").value = s.s2Cond || "SH";
+    document.getElementById("subjNotes").value = s.notes || "";
+    selectedSwatchColor = s.color || PALETTE[0];
+    const del = document.getElementById("btnDeleteSubject");
+    del.style.display = "inline-flex";
+    del.onclick = () => {
+      if (confirm(`Eliminare ${s.name}?`)) {
+        subjects = subjects.filter((x) => x.id !== id);
+        if (selectedSubjectFilter === id) selectedSubjectFilter = null;
+        saveAll();
+        closeModal("subjectModal");
+        renderAll();
+      }
+    };
+    renderSwatches();
+    openModal("subjectModal");
+  }
+
+  document.getElementById("subjectForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const editId = document.getElementById("editSubjectId").value;
+    const obj = {
+      id: editId || "subj_" + Date.now(),
+      code: document.getElementById("subjCode").value.trim(),
+      name: document.getElementById("subjName").value.trim(),
+      phone: document.getElementById("subjPhone").value.trim(),
+      s1Date: document.getElementById("s1Date").value,
+      s1Cond: document.getElementById("s1Cond").value,
+      s2Date: document.getElementById("s2Date").value,
+      s2Cond: document.getElementById("s2Cond").value,
+      color: selectedSwatchColor,
+      notes: document.getElementById("subjNotes").value.trim()
+    };
+    subjects = editId ? subjects.map((x) => (x.id === editId ? obj : x)) : [...subjects, obj];
+    saveAll();
+    closeModal("subjectModal");
+    renderAll();
+  });
+
+  function openAllSubjectsModal() {
+    const list = document.getElementById("allSubjectsList");
+    if (subjects.length === 0) {
+      list.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessun soggetto inserito.</p>`;
+    } else {
+      const today = formatDateISO(new Date());
+      list.innerHTML = "";
+      subjects.forEach((s) => {
+        const { done, total } = getSubjectCompletion(s);
+        const last = s.s2Date || s.s1Date;
+        const isDone = (total > 0 && done === total) || (last && last < today);
+        const row = document.createElement("div");
+        row.style.cssText = `border:1.5px solid var(--border); border-left:5px solid ${s.color}; border-radius:11px; padding:10px 12px; margin-bottom:8px;`;
+        row.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
+            <span style="font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; background:${isDone ? "#dcfce7" : "#dbeafe"}; color:${isDone ? "#166534" : "#1e40af"};">
+              ${isDone ? "✓ Già fatto" : `${done}/${total}`}
+            </span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+            S1: ${formatItShort(s.s1Date)} (${s.s1Cond}) · S2: ${formatItShort(s.s2Date)} (${s.s2Cond})
+          </div>
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <button class="btn btn-sm" onclick="selectedSubjectFilter='${s.id}'; closeModal('allSubjectsModal'); renderAll();">Filtra</button>
+            <button class="btn btn-sm" onclick="closeModal('allSubjectsModal'); openEditSubject('${s.id}');">Modifica</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+    openModal("allSubjectsModal");
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add("open"); }
+  function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+  function escapeHtml(s) {
+    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  document.getElementById("btnPrevMonth").onclick = () => { currentMonthDate.setMonth(currentMonthDate.getMonth() - 1); renderCalendar(); };
+  document.getElementById("btnNextMonth").onclick = () => { currentMonthDate.setMonth(currentMonthDate.getMonth() + 1); renderCalendar(); };
+  document.getElementById("btnToday").onclick = () => { currentMonthDate = new Date(); currentMonthDate.setDate(1); renderCalendar(); };
+
+  function renderAll() { renderSubjectsStrip(); renderCalendar(); }
+  initEditableHeader();
+  initFilesDropdown();
+  renderAll();
+</script>
+</body>
+</html>

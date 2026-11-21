@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MORFEO · Thesis Planner (MacBook)</title>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface-soft: #fafafa;
+    --text: #1d1d1f;
+    --text-muted: #6e6e73;
+    --border: #d2d2d7;
+    --border-strong: #86868b;
+    --accent: #0071e3;
+    --accent-soft: #e8f2fc;
+    --bb-bg: #eef2ff;
+    --bb-text: #3730a3;
+    --bb-border: #c7d2fe;
+    --sh-bg: #fff7ed;
+    --sh-text: #9a3412;
+    --sh-border: #fed7aa;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 20px 24px 40px;
+  }
+
+  /* Header */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+
+  .title-block {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .title-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h1#studyTitle {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    padding: 2px 6px;
+    margin-left: -6px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  h1#studyTitle:hover { background: #f0f0f5; }
+
+  .edit-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  p#studySubtitle {
+    margin: 4px 0 0;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 6px;
+    margin-left: -6px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  p#studySubtitle:hover { background: #f0f0f5; }
+
+  .inline-edit-input {
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 3px 8px;
+    outline: none;
+    width: 100%;
+    max-width: 440px;
+  }
+  .inline-edit-sub {
+    font-size: 13.5px;
+    font-weight: 400;
+    margin-top: 4px;
+  }
+
+  .header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    position: relative;
+  }
+
+  .btn {
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--border-strong); background: #f9f9fb; }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #0062c4; border-color: #0062c4; }
+  .btn-sm { padding: 6px 10px; font-size: 12.5px; border-radius: 8px; }
+  .btn-danger { color: #d93025; border-color: #f3b7b3; }
+  .btn-danger:hover { background: #fef2f2; border-color: #d93025; }
+
+  /* File Utili Dropdown Panel */
+  .files-dropdown {
+    display: none;
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .files-dropdown.open { display: block; }
+  .files-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .file-card {
+    background: var(--surface-soft);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .file-card label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+  }
+  .file-card input, .file-card textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    background: #fff;
+    color: var(--text);
+    outline: none;
+  }
+  .file-card input:focus, .file-card textarea:focus { border-color: var(--accent); }
+  .file-card textarea { resize: vertical; min-height: 62px; }
+  .file-card-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  /* Soggetti Reclutati Section */
+  .subjects-section {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .legend-inline {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    align-items: center;
+  }
+  .legend-box-dashed {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px dashed var(--accent);
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+  .legend-box-solid {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+
+  .subjects-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    align-items: stretch;
+  }
+
+  .all-subjects-card {
+    min-width: 165px;
+    background: var(--surface-soft);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .all-subjects-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .all-subjects-card.active-filter { border: 2px solid var(--accent); background: var(--accent-soft); }
+
+  .subject-card {
+    min-width: 225px;
+    max-width: 250px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-left-width: 5px;
+    border-radius: var(--radius-sm);
+    padding: 11px 13px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .subject-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .subject-card.selected {
+    background: #f8fbff;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  .subj-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .subj-code-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .subj-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+  }
+  .subj-progress {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: #f2f2f7;
+    padding: 2px 7px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .cond-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .cond-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 4px 7px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+  }
+  .cond-tag {
+    font-weight: 700;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .cond-bb { background: var(--bb-bg); color: var(--bb-text); border: 1px solid var(--bb-border); }
+  .cond-sh { background: var(--sh-bg); color: var(--sh-text); border: 1px solid var(--sh-border); }
+
+  /* Calendar Section */
+  .calendar-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .cal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .cal-month-title {
+    font-size: 19px;
+    font-weight: 700;
+    text-transform: capitalize;
+    letter-spacing: -0.01em;
+  }
+  .cal-nav { display: flex; gap: 6px; align-items: center; }
+
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .day-cell {
+    min-height: 92px;
+    background: #fff;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 11px;
+    padding: 7px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    overflow: hidden;
+  }
+  .day-cell:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+  .day-cell.other-month {
+    background: #fafafa;
+    opacity: 0.5;
+  }
+  .day-cell.today .day-num {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+
+  .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .session-pill-top {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.88);
+    color: #1d1d1f;
+  }
+
+  .ev-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 6px;
+    border-radius: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .ev-diary {
+    background: rgba(255,255,255,0.92);
+    border: 1.5px dashed currentColor;
+  }
+  .ev-session {
+    background: rgba(255,255,255,0.95);
+    color: #1d1d1f !important;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  }
+
+  /* Modals */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal-box {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 20px 22px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ececef;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .modal-head h3 { margin: 0; font-size: 17px; }
+  .close-btn {
+    background: #f2f2f7;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 11px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .color-swatches {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+  }
+  .swatch.active {
+    border-color: #1d1d1f;
+    transform: scale(1.1);
+  }
+
+  /* Session clean card inside day modal */
+  .session-clean-box {
+    border: 1.5px solid var(--border);
+    border-left-width: 6px;
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: var(--surface-soft);
+    margin-bottom: 12px;
+  }
+  .session-clean-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .session-clean-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .session-clean-phone {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .btn-whatsapp {
+    background: #25d366;
+    border-color: #1ebe5d;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: 9px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .btn-whatsapp:hover { background: #1ebe5d; }
+
+  /* Diary block inside day modal */
+  .diary-block {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 13px 15px;
+    background: #fff;
+    margin-bottom: 12px;
+  }
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+  .check-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+  }
+  .reminder-box {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #ececef;
+  }
+  .reminder-controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .reminder-controls select, .reminder-controls input[type="time"] {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 9px;
+    font-family: inherit;
+    font-size: 13px;
+  }
+
+  /* All subjects list modal */
+  .all-subj-item {
+    border: 1.5px solid var(--border);
+    border-left-width: 5px;
+    border-radius: 11px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .status-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .status-done { background: #dcfce7; color: #166534; }
+  .status-active { background: #dbeafe; color: #1e40af; }
+  .status-upcoming { background: #f3f4f6; color: #374151; }
+
+  /* Reminder Toast Popup */
+  .alarm-popup {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 340px;
+    background: #fff;
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 16px 38px rgba(0,0,0,0.18);
+    z-index: 2000;
+  }
+  .alarm-popup.open { display: block; animation: popIn 0.25s ease; }
+  @keyframes popIn {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="title-block">
+      <div class="title-row">
+        <h1 id="studyTitle" title="Clicca per modificare il titolo">MORFEO · Thesis Planner</h1>
+        <span class="edit-hint" id="editTitleIcon" title="Modifica titolo">✏️</span>
+      </div>
+      <div>
+        <p id="studySubtitle" title="Clicca per modificare il sottotitolo">Monitoraggio sperimentale · Sessioni & Diari del Sonno (MacBook)</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-primary" id="btnNewSubject">+ Nuovo Soggetto</button>
+      <button class="btn" id="btnToggleFiles">📁 File Utili ▾</button>
+    </div>
+  </header>
+
+  <!-- FILE UTILI DROPDOWN -->
+  <section class="files-dropdown" id="filesDropdown">
+    <div class="files-grid">
+      <div class="file-card">
+        <label for="linkDiaryInput">1. Link Diario del Sonno</label>
+        <input type="url" id="linkDiaryInput" placeholder="https://forms.gle/... (incolla link diario)" />
+        <div class="file-card-actions">
+          <button class="btn btn-sm" onclick="copyField('linkDiaryInput')">Copia</button>
+          <button class="btn btn-sm" onclick="openUrlField('linkDiaryInput')">Apri ↗</button>
+        </div>
+      </div>
+      <div class="file-card">
+        <label for="linkRecruitInput">2. Link Questionario Reclutamento</label>
+        <input type="url" id="linkRecruitInput" placeholder="https://forms.gle/... (incolla link reclutamento)" />
+        <div class="file-card-actions">
+          <button class="btn btn-sm" onclick="copyField('linkRecruitInput')">Copia</button>
+          <button class="btn btn-sm" onclick="openUrlField('linkRecruitInput')">Apri ↗</button>
+        </div>
+      </div>
+      <div class="file-card">
+        <label for="msgNotesInput">3. Note · Testo messaggi partecipanti</label>
+        <textarea id="msgNotesInput" placeholder="Scrivi o incolla il messaggio standard per i partecipanti (usa {LINK} per inserire il link del diario)..."></textarea>
+        <div class="file-card-actions">
+          <button class="btn btn-sm" onclick="copyMessageTemplate()">Copia messaggio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOGGETTI RECLUTATI -->
+  <section class="subjects-section">
+    <div class="section-head">
+      <span class="section-title">Soggetti Reclutati</span>
+      <div class="legend-inline">
+        <span><i class="legend-box-dashed"></i>Giorni Diario (D1–D2)</span>
+        <span><i class="legend-box-solid"></i>Giorno Sessione (+ D3)</span>
+      </div>
+    </div>
+    <div class="subjects-strip" id="subjectsStrip"></div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section class="calendar-card">
+    <div class="cal-toolbar">
+      <div class="cal-month-title" id="calMonthTitle"></div>
+      <div class="cal-nav">
+        <button class="btn btn-sm" id="btnPrevMonth">◀ Mese prec.</button>
+        <button class="btn btn-sm" id="btnToday">Oggi</button>
+        <button class="btn btn-sm" id="btnNextMonth">Mese succ. ▶</button>
+      </div>
+    </div>
+    <div class="weekdays">
+      <div class="weekday">Lun</div>
+      <div class="weekday">Mar</div>
+      <div class="weekday">Mer</div>
+      <div class="weekday">Gio</div>
+      <div class="weekday">Ven</div>
+      <div class="weekday">Sab</div>
+      <div class="weekday">Dom</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </section>
+</div>
+
+<!-- MODAL NUOVO / MODIFICA SOGGETTO -->
+<div class="modal-backdrop" id="subjectModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="subjectModalTitle">Nuovo Soggetto</h3>
+      <button class="close-btn" onclick="closeModal('subjectModal')">✕</button>
+    </div>
+    <form id="subjectForm">
+      <input type="hidden" id="editSubjectId" />
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="subjCode">N. Soggetto *</label>
+          <input type="text" id="subjCode" placeholder="Es. S01" required />
+        </div>
+        <div class="form-group">
+          <label for="subjName">Nome e Cognome *</label>
+          <input type="text" id="subjName" placeholder="Es. Marco Rossi" required />
+        </div>
+        <div class="form-group full">
+          <label for="subjPhone">Numero di cellulare (WhatsApp)</label>
+          <input type="tel" id="subjPhone" placeholder="Es. +39 333 1234567" />
+        </div>
+        <div class="form-group">
+          <label for="s1Date">Data Sessione 1 (S1)</label>
+          <input type="date" id="s1Date" required />
+        </div>
+        <div class="form-group">
+          <label for="s1Cond">Condizione S1</label>
+          <select id="s1Cond">
+            <option value="BB">BB (Binaural Beats)</option>
+            <option value="SH">SH (Sham)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="s2Date">Data Sessione 2 (S2)</label>
+          <input type="date" id="s2Date" />
+        </div>
+        <div class="form-group">
+          <label for="s2Cond">Condizione S2</label>
+          <select id="s2Cond">
+            <option value="SH">SH (Sham)</option>
+            <option value="BB">BB (Binaural Beats)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Colore identificativo</label>
+          <div class="color-swatches" id="colorSwatches"></div>
+        </div>
+        <div class="form-group full">
+          <label for="subjNotes">Note sul soggetto</label>
+          <textarea id="subjNotes" rows="3" placeholder="Orari preferiti, contatti, note sperimentali..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:10px; margin-top:8px;">
+        <button type="button" class="btn btn-danger" id="btnDeleteSubject" style="display:none;">Elimina soggetto</button>
+        <div style="display:flex; gap:8px; margin-left:auto;">
+          <button type="button" class="btn" onclick="closeModal('subjectModal')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Soggetto</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL GIORNO (SESSIONE PULITA / DIARIO + PROMEMORIA) -->
+<div class="modal-backdrop" id="dayModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="dayModalTitle">Dettaglio Giorno</h3>
+      <button class="close-btn" onclick="closeModal('dayModal')">✕</button>
+    </div>
+    <div id="dayModalContent"></div>
+  </div>
+</div>
+
+<!-- MODAL TUTTI I SOGGETTI (INCLUSI GIÀ FATTI) -->
+<div class="modal-backdrop" id="allSubjectsModal">
+  <div class="modal-box" style="max-width:600px;">
+    <div class="modal-head">
+      <h3>Tutti i Soggetti Reclutati</h3>
+      <button class="close-btn" onclick="closeModal('allSubjectsModal')">✕</button>
+    </div>
+    <div id="allSubjectsList"></div>
+  </div>
+</div>
+
+<!-- POPUP PROMEMORIA SIMPATICO -->
+<div class="alarm-popup" id="alarmPopup">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <strong style="font-size:15px;">⏰ Promemoria Diario del Sonno!</strong>
+    <button class="close-btn" style="width:26px;height:26px;font-size:13px;" onclick="closeAlarmPopup()">✕</button>
+  </div>
+  <p id="alarmPopupText" style="margin:0 0 12px; font-size:13.5px; color:#3a3a3c; line-height:1.4;"></p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button class="btn btn-primary btn-sm" onclick="copyMessageTemplate()">📋 Copia messaggio + link</button>
+    <button class="btn btn-sm" onclick="snoozeAlarm()">💤 +10 min</button>
+  </div>
+</div>
+
+<script>
+  const PALETTE = [
+    "#2563eb", "#059669", "#d97706", "#7c3aed",
+    "#db2777", "#0891b2", "#dc2626", "#4f46e5",
+    "#65a30d", "#ea580c"
+  ];
+
+  const STORAGE_KEYS = {
+    SUBJECTS: "morfeo_v3_subjects",
+    CHECKS: "morfeo_v3_checks",
+    NOTES: "morfeo_v3_day_notes",
+    REMINDERS: "morfeo_v3_reminders",
+    FILES: "morfeo_v3_files",
+    TITLE: "morfeo_v3_title",
+    SUBTITLE: "morfeo_v3_subtitle"
+  };
+
+  let subjects = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUBJECTS) || "[]");
+  let checks = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHECKS) || "{}");
+  let dayNotes = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES) || "{}");
+  let reminders = JSON.parse(localStorage.getItem(STORAGE_KEYS.REMINDERS) || "[]");
+  let filesData = JSON.parse(localStorage.getItem(STORAGE_KEYS.FILES) || '{"diary":"","recruit":"","msg":""}');
+
+  let currentMonthDate = new Date();
+  currentMonthDate.setDate(1);
+  let selectedSubjectFilter = null;
+  let selectedSwatchColor = PALETTE[0];
+  let activeDayStr = null;
+  let lastTriggeredReminder = null;
+
+  function saveAll() {
+    localStorage.setItem(STORAGE_KEYS.SUBJECTS, JSON.stringify(subjects));
+    localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(checks));
+    localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(dayNotes));
+    localStorage.setItem(STORAGE_KEYS.REMINDERS, JSON.stringify(reminders));
+    localStorage.setItem(STORAGE_KEYS.FILES, JSON.stringify(filesData));
+  }
+
+  function formatDateISO(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function parseISO(str) {
+    const [y, m, d] = str.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function addDays(isoStr, delta) {
+    const d = parseISO(isoStr);
+    d.setDate(d.getDate() + delta);
+    return formatDateISO(d);
+  }
+
+  function formatItShort(isoStr) {
+    if (!isoStr) return "—";
+    const [y, m, d] = isoStr.split("-");
+    return `${d}/${m}`;
+  }
+
+  function formatItFull(isoStr) {
+    const d = parseISO(isoStr);
+    return d.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+
+  // Editable Title & Subtitle
+  function initEditableHeader() {
+    const titleEl = document.getElementById("studyTitle");
+    const subEl = document.getElementById("studySubtitle");
+    const savedTitle = localStorage.getItem(STORAGE_KEYS.TITLE);
+    const savedSub = localStorage.getItem(STORAGE_KEYS.SUBTITLE);
+    if (savedTitle) titleEl.textContent = savedTitle;
+    if (savedSub) subEl.textContent = savedSub;
+
+    function makeEditable(el, storageKey, isSub) {
+      el.addEventListener("click", () => {
+        if (el.querySelector("input")) return;
+        const current = el.textContent;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = current;
+        input.className = "inline-edit-input" + (isSub ? " inline-edit-sub" : "");
+        el.textContent = "";
+        el.appendChild(input);
+        input.focus();
+        input.select();
+
+        const commit = () => {
+          const val = input.value.trim() || current;
+          el.textContent = val;
+          localStorage.setItem(storageKey, val);
+        };
+        input.addEventListener("blur", commit);
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") { el.textContent = current; }
+        });
+      });
+    }
+
+    makeEditable(titleEl, STORAGE_KEYS.TITLE, false);
+    document.getElementById("editTitleIcon").addEventListener("click", () => titleEl.click());
+    makeEditable(subEl, STORAGE_KEYS.SUBTITLE, true);
+  }
+
+  // File Utili
+  function initFilesDropdown() {
+    const diaryInp = document.getElementById("linkDiaryInput");
+    const recInp = document.getElementById("linkRecruitInput");
+    const msgInp = document.getElementById("msgNotesInput");
+
+    diaryInp.value = filesData.diary || "";
+    recInp.value = filesData.recruit || "";
+    msgInp.value = filesData.msg || "";
+
+    const sync = () => {
+      filesData.diary = diaryInp.value.trim();
+      filesData.recruit = recInp.value.trim();
+      filesData.msg = msgInp.value;
+      saveAll();
+    };
+    diaryInp.addEventListener("input", sync);
+    recInp.addEventListener("input", sync);
+    msgInp.addEventListener("input", sync);
+
+    document.getElementById("btnToggleFiles").addEventListener("click", () => {
+      document.getElementById("filesDropdown").classList.toggle("open");
+    });
+  }
+
+  function copyField(id) {
+    const val = document.getElementById(id).value.trim();
+    if (!val) return alert("Il campo è vuoto.");
+    navigator.clipboard.writeText(val);
+    alert("Link copiato negli appunti!");
+  }
+
+  function openUrlField(id) {
+    const val = document.getElementById(id).value.trim();
+    if (!val) return alert("Inserisci prima un link valido.");
+    window.open(val.startsWith("http") ? val : "https://" + val, "_blank");
+  }
+
+  function copyMessageTemplate() {
+    const link = filesData.diary || "[Link Diario]";
+    const raw = filesData.msg && filesData.msg.trim()
+      ? filesData.msg
+      : "Ciao! Ti ricordo di compilare il Diario del Sonno di oggi al seguente link: {LINK}";
+    const finalMsg = raw.includes("{LINK}") ? raw.replace(/\{LINK\}/g, link) : `${raw}
+${link}`;
+    navigator.clipboard.writeText(finalMsg);
+    alert("Messaggio copiato negli appunti!");
+  }
+
+  // Build schedule events from subjects
+  function getScheduleEvents() {
+    const events = [];
+    subjects.forEach((s) => {
+      const sessions = [
+        { num: 1, date: s.s1Date, cond: s.s1Cond },
+        { num: 2, date: s.s2Date, cond: s.s2Cond }
+      ];
+      sessions.forEach((sess) => {
+        if (!sess.date) return;
+        // D1 (-2 days), D2 (-1 day), Session + D3 (0 day)
+        events.push({
+          type: "diary",
+          diaryDay: 1,
+          sessionNum: sess.num,
+          cond: sess.cond,
+          date: addDays(sess.date, -2),
+          subject: s,
+          checkKey: `${s.id}_S${sess.num}_D1`
+        });
+        events.push({
+          type: "diary",
+          diaryDay: 2,
+          sessionNum: sess.num,
+          cond: sess.cond,
+          date: addDays(sess.date, -1),
+          subject: s,
+          checkKey: `${s.id}_S${sess.num}_D2`
+        });
+        events.push({
+          type: "session",
+          diaryDay: 3,
+          sessionNum: sess.num,
+          cond: sess.cond,
+          date: sess.date,
+          subject: s,
+          checkKey: `${s.id}_S${sess.num}_D3`
+        });
+      });
+    });
+    return events;
+  }
+
+  function getSubjectCompletion(subj) {
+    let total = 0;
+    let done = 0;
+    [1, 2].forEach((num) => {
+      const dt = num === 1 ? subj.s1Date : subj.s2Date;
+      if (dt) {
+        total += 3;
+        if (checks[`${subj.id}_S${num}_D1`]) done++;
+        if (checks[`${subj.id}_S${num}_D2`]) done++;
+        if (checks[`${subj.id}_S${num}_D3`]) done++;
+      }
+    });
+    return { done, total };
+  }
+
+  function isSubjectCompleted(subj) {
+    const today = formatDateISO(new Date());
+    const lastDate = subj.s2Date || subj.s1Date;
+    const { done, total } = getSubjectCompletion(subj);
+    if (total > 0 && done === total) return true;
+    if (lastDate && lastDate < today) return true;
+    return false;
+  }
+
+  // Render Subjects Strip
+  function renderSubjectsStrip() {
+    const strip = document.getElementById("subjectsStrip");
+    strip.innerHTML = "";
+
+    const allCard = document.createElement("div");
+    allCard.className = "all-subjects-card" + (selectedSubjectFilter === null ? " active-filter" : "");
+    allCard.innerHTML = `
+      <div>
+        <div style="font-size:13.5px; font-weight:700;">👥 Tutti i soggetti</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${subjects.length} reclutati totali</div>
+      </div>
+      <div style="display:flex; gap:6px; margin-top:10px;">
+        <button class="btn btn-sm" style="width:100%; justify-content:center;" onclick="event.stopPropagation(); openAllSubjectsModal()">Apri lista completa</button>
+      </div>
+    `;
+    allCard.addEventListener("click", () => {
+      selectedSubjectFilter = null;
+      renderAll();
+    });
+    strip.appendChild(allCard);
+
+    subjects.forEach((s) => {
+      const { done, total } = getSubjectCompletion(s);
+      const card = document.createElement("div");
+      card.className = "subject-card" + (selectedSubjectFilter === s.id ? " selected" : "");
+      card.style.borderLeftColor = s.color;
+
+      const s1Tag = s.s1Cond === "BB" ? "cond-bb" : "cond-sh";
+      const s2Tag = s.s2Cond === "BB" ? "cond-bb" : "cond-sh";
+
+      card.innerHTML = `
+        <div class="subj-card-top">
+          <div>
+            <span class="subj-code-pill" style="background:${s.color};">${escapeHtml(s.code || "SOGG")}</span>
+            <div class="subj-name">${escapeHtml(s.name)}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <span class="subj-progress">${done}/${total}</span>
+            <button class="btn btn-sm" style="padding:2px 6px; font-size:11px;" title="Modifica soggetto" onclick="event.stopPropagation(); openEditSubject('${s.id}')">✏️</button>
+          </div>
+        </div>
+        <div class="cond-stack">
+          <div class="cond-line">
+            <span><strong>S1:</strong> ${formatItShort(s.s1Date)}</span>
+            <span class="cond-tag ${s1Tag}">${s.s1Cond}</span>
+          </div>
+          <div class="cond-line">
+            <span><strong>S2:</strong> ${formatItShort(s.s2Date)}</span>
+            <span class="cond-tag ${s2Tag}">${s.s2Cond}</span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener("click", () => {
+        selectedSubjectFilter = selectedSubjectFilter === s.id ? null : s.id;
+        renderAll();
+      });
+
+      strip.appendChild(card);
+    });
+  }
+
+  // Render Calendar
+  function renderCalendar() {
+    const year = currentMonthDate.getFullYear();
+    const month = currentMonthDate.getMonth();
+    document.getElementById("calMonthTitle").textContent = currentMonthDate.toLocaleDateString("it-IT", {
+      month: "long",
+      year: "numeric"
+    });
+
+    const grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    let startOffset = firstDayOfMonth.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+
+    const startDate = new Date(year, month, 1 - startOffset);
+    const todayISO = formatDateISO(new Date());
+
+    let allEvents = getScheduleEvents();
+    if (selectedSubjectFilter) {
+      allEvents = allEvents.filter((e) => e.subject.id === selectedSubjectFilter);
+    }
+
+    for (let i = 0; i < 42; i++) {
+      const cellDate = new Date(startDate);
+      cellDate.setDate(startDate.getDate() + i);
+      const iso = formatDateISO(cellDate);
+      const inMonth = cellDate.getMonth() === month;
+
+      const dayEvents = allEvents.filter((e) => e.date === iso);
+      const sessionEvents = dayEvents.filter((e) => e.type === "session");
+      const diaryOnlyEvents = dayEvents.filter((e) => e.type === "diary");
+
+      const cell = document.createElement("div");
+      cell.className = "day-cell" + (!inMonth ? " other-month" : "") + (iso === todayISO ? " today" : "");
+
+      // Styling: solid full color if session day, dashed border if diary-only day
+      if (sessionEvents.length > 0) {
+        if (sessionEvents.length === 1) {
+          const c = sessionEvents[0].subject.color;
+          cell.style.background = c;
+          cell.style.borderColor = c;
+          cell.style.color = "#fff";
+        } else {
+          const c1 = sessionEvents[0].subject.color;
+          const c2 = sessionEvents[1].subject.color;
+          cell.style.background = `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
+          cell.style.borderColor = c1;
+          cell.style.color = "#fff";
+        }
+      } else if (diaryOnlyEvents.length > 0) {
+        const c = diaryOnlyEvents[0].subject.color;
+        cell.style.border = `2px dashed ${c}`;
+        cell.style.background = "#ffffff";
+      }
+
+      const header = document.createElement("div");
+      header.className = "day-header";
+      header.innerHTML = `<span class="day-num">${cellDate.getDate()}</span>` +
+        (sessionEvents.length > 0 ? `<span class="session-pill-top">SESSIONE</span>` : "");
+      cell.appendChild(header);
+
+      dayEvents.forEach((ev) => {
+        const badge = document.createElement("div");
+        const isChecked = !!checks[ev.checkKey];
+        const codeLabel = ev.subject.code || ev.subject.name.split(" ")[0];
+        if (ev.type === "session") {
+          badge.className = "ev-badge ev-session";
+          badge.innerHTML = `<span>⚡ ${escapeHtml(codeLabel)} · S${ev.sessionNum} [${ev.cond}]</span><span>${isChecked ? "✓" : ""}</span>`;
+        } else {
+          badge.className = "ev-badge ev-diary";
+          badge.style.color = ev.subject.color;
+          badge.innerHTML = `<span>🌙 ${escapeHtml(codeLabel)} · D${ev.diaryDay}/3</span><span>${isChecked ? "✓" : ""}</span>`;
+        }
+        cell.appendChild(badge);
+      });
+
+      cell.addEventListener("click", () => openDayModal(iso));
+      grid.appendChild(cell);
+    }
+  }
+
+  // Day Modal: Session clean card vs Diary checklist + reminder
+  function openDayModal(isoStr) {
+    activeDayStr = isoStr;
+    document.getElementById("dayModalTitle").textContent = formatItFull(isoStr);
+    const container = document.getElementById("dayModalContent");
+    container.innerHTML = "";
+
+    const allEvents = getScheduleEvents().filter((e) => e.date === isoStr);
+    const sessionEvents = allEvents.filter((e) => e.type === "session");
+    const diaryEvents = allEvents.filter((e) => e.type === "diary");
+
+    if (allEvents.length === 0) {
+      container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessuna sessione o diario programmato per questa data.</p>`;
+    }
+
+    // 1. Clean Session Cards (ONLY Name/Surname, Phone, Condition BB/SH, WhatsApp button, Notes)
+    sessionEvents.forEach((ev) => {
+      const s = ev.subject;
+      const noteKey = `sess_${s.id}_${isoStr}`;
+      const condLabel = ev.cond === "BB" ? "BB (Binaural Beats)" : "SHAM";
+      const condClass = ev.cond === "BB" ? "cond-bb" : "cond-sh";
+      const cleanPhone = (s.phone || "").replace(/[^0-9]/g, "");
+      const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "";
+
+      const box = document.createElement("div");
+      box.className = "session-clean-box";
+      box.style.borderLeftColor = s.color;
+      box.innerHTML = `
+        <div class="session-clean-header">
+          <div class="session-clean-name">${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</div>
+          <span class="cond-tag ${condClass}" style="font-size:12.5px; padding:3px 9px;">${condLabel}</span>
+        </div>
+        <div class="session-clean-phone">📱 ${s.phone ? escapeHtml(s.phone) : "Numero non inserito"}</div>
+        ${waUrl ? `<a class="btn-whatsapp" href="${waUrl}" target="_blank" rel="noopener">💬 Apri chat WhatsApp</a>` : ""}
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Note sessione</label>
+          <textarea rows="3" placeholder="Scrivi qui le note per questa sessione..." oninput="saveDayNote('${noteKey}', this.value)">${escapeHtml(dayNotes[noteKey] || "")}</textarea>
+        </div>
+      `;
+      container.appendChild(box);
+    });
+
+    // 2. Diary Days Block (Checklist + Diary Reminder)
+    if (diaryEvents.length > 0) {
+      const dBox = document.createElement("div");
+      dBox.className = "diary-block";
+      let checksHtml = `<div style="font-weight:700; font-size:14px; margin-bottom:8px;">🌙 Diari del Sonno previsti oggi</div>`;
+      diaryEvents.forEach((ev) => {
+        const checked = checks[ev.checkKey] ? "checked" : "";
+        checksHtml += `
+          <label class="check-row">
+            <input type="checkbox" ${checked} onchange="toggleCheck('${ev.checkKey}', this.checked)" />
+            <span style="color:${ev.subject.color};">●</span>
+            <span>${escapeHtml(ev.subject.code || "")} ${escapeHtml(ev.subject.name)} — Diario ${ev.diaryDay}/3 (S${ev.sessionNum})</span>
+          </label>
+        `;
+      });
+
+      // Reminder setup inside diary day
+      let optionsHtml = "";
+      diaryEvents.forEach((ev) => {
+        const label = `${ev.subject.code || ev.subject.name} · Diario ${ev.diaryDay}/3`;
+        optionsHtml += `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`;
+      });
+
+      const dayReminders = reminders.filter((r) => r.date === isoStr);
+      let remListHtml = "";
+      if (dayReminders.length > 0) {
+        remListHtml = `<div style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">`;
+        dayReminders.forEach((r) => {
+          remListHtml += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#f5f5f7; padding:6px 10px; border-radius:8px; font-size:12.5px;">
+              <span>⏰ <strong>${r.time}</strong> — ${escapeHtml(r.label)}</span>
+              <button class="btn btn-sm btn-danger" style="padding:2px 7px;" onclick="deleteReminder('${r.id}')">✕</button>
+            </div>
+          `;
+        });
+        remListHtml += `</div>`;
+      }
+
+      dBox.innerHTML = checksHtml + `
+        <div class="reminder-box">
+          <div style="font-weight:700; font-size:13px;">🔔 Imposta promemoria diario</div>
+          <div class="reminder-controls">
+            <select id="remDiarySelect">${optionsHtml}</select>
+            <input type="time" id="remTimeInput" value="21:00" />
+            <button type="button" class="btn btn-primary btn-sm" onclick="addDiaryReminder('${isoStr}')">Salva nel Planner</button>
+            <button type="button" class="btn btn-sm" onclick="exportSingleIcs('${isoStr}')">📲 Suona su iPhone (.ics)</button>
+          </div>
+          ${remListHtml}
+        </div>
+      `;
+      container.appendChild(dBox);
+    }
+
+    openModal("dayModal");
+  }
+
+  function toggleCheck(key, val) {
+    checks[key] = val;
+    saveAll();
+    renderSubjectsStrip();
+    renderCalendar();
+  }
+
+  function saveDayNote(key, val) {
+    dayNotes[key] = val;
+    saveAll();
+  }
+
+  function addDiaryReminder(isoStr) {
+    const label = document.getElementById("remDiarySelect").value;
+    const time = document.getElementById("remTimeInput").value;
+    if (!time) return alert("Seleziona un orario.");
+    reminders.push({
+      id: "rem_" + Date.now(),
+      date: isoStr,
+      time,
+      label
+    });
+    saveAll();
+    openDayModal(isoStr);
+  }
+
+  function deleteReminder(id) {
+    reminders = reminders.filter((r) => r.id !== id);
+    saveAll();
+    if (activeDayStr) openDayModal(activeDayStr);
+  }
+
+  function exportSingleIcs(isoStr) {
+    const label = document.getElementById("remDiarySelect").value;
+    const time = document.getElementById("remTimeInput").value || "21:00";
+    const [hh, mm] = time.split(":");
+    const cleanDate = isoStr.replace(/-/g, "");
+    const dtStart = `${cleanDate}T${hh}${mm}00`;
+    const dtEnd = `${cleanDate}T${hh}${String(Math.min(59, Number(mm) + 15)).padStart(2, "0")}00`;
+    const link = filesData.diary || "";
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//MORFEO Thesis Planner//IT",
+      "BEGIN:VEVENT",
+      `UID:morfeo-${Date.now()}@thesisplanner`,
+      `DTSTAMP:${cleanDate}T080000Z`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `SUMMARY:🌙 Diario del Sonno · ${label}`,
+      `DESCRIPTION:Invia o compila il Diario del Sonno (${label}). ${link}`,
+      "BEGIN:VALARM",
+      "TRIGGER:-PT0M",
+      "ACTION:DISPLAY",
+      `DESCRIPTION:Promemoria Diario del Sonno: ${label}`,
+      "END:VALARM",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("
+");
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `promemoria_diario_${isoStr}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Alarm check loop
+  setInterval(() => {
+    const now = new Date();
+    const todayISO = formatDateISO(now);
+    const hhmm = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    const match = reminders.find((r) => r.date === todayISO && r.time === hhmm);
+    if (match && lastTriggeredReminder !== match.id + "_" + hhmm) {
+      lastTriggeredReminder = match.id + "_" + hhmm;
+      showAlarmPopup(`È l'ora (${match.time}) per: ${match.label}! Ricordati di inviare o far compilare il diario.`);
+    }
+  }, 15000);
+
+  function showAlarmPopup(text) {
+    document.getElementById("alarmPopupText").textContent = text;
+    document.getElementById("alarmPopup").classList.add("open");
+  }
+  function closeAlarmPopup() {
+    document.getElementById("alarmPopup").classList.remove("open");
+  }
+  function snoozeAlarm() {
+    closeAlarmPopup();
+    setTimeout(() => {
+      showAlarmPopup("Posticipo terminato! Ricordati il Diario del Sonno di oggi.");
+    }, 10 * 60 * 1000);
+  }
+
+  // Subject Modal (Create / Edit)
+  function renderSwatches() {
+    const wrap = document.getElementById("colorSwatches");
+    wrap.innerHTML = "";
+    PALETTE.forEach((c) => {
+      const el = document.createElement("div");
+      el.className = "swatch" + (selectedSwatchColor === c ? " active" : "");
+      el.style.background = c;
+      el.addEventListener("click", () => {
+        selectedSwatchColor = c;
+        renderSwatches();
+      });
+      wrap.appendChild(el);
+    });
+  }
+
+  function suggestNextCode() {
+    const nextNum = subjects.length + 1;
+    return "S" + String(nextNum).padStart(2, "0");
+  }
+
+  document.getElementById("btnNewSubject").addEventListener("click", () => {
+    document.getElementById("subjectModalTitle").textContent = "Nuovo Soggetto";
+    document.getElementById("editSubjectId").value = "";
+    document.getElementById("subjCode").value = suggestNextCode();
+    document.getElementById("subjName").value = "";
+    document.getElementById("subjPhone").value = "";
+    document.getElementById("s1Date").value = formatDateISO(new Date());
+    document.getElementById("s1Cond").value = "BB";
+    document.getElementById("s2Date").value = "";
+    document.getElementById("s2Cond").value = "SH";
+    document.getElementById("subjNotes").value = "";
+    selectedSwatchColor = PALETTE[subjects.length % PALETTE.length];
+    document.getElementById("btnDeleteSubject").style.display = "none";
+    renderSwatches();
+    openModal("subjectModal");
+  });
+
+  function openEditSubject(id) {
+    const s = subjects.find((x) => x.id === id);
+    if (!s) return;
+    document.getElementById("subjectModalTitle").textContent = "Modifica Soggetto";
+    document.getElementById("editSubjectId").value = s.id;
+    document.getElementById("subjCode").value = s.code || "";
+    document.getElementById("subjName").value = s.name;
+    document.getElementById("subjPhone").value = s.phone || "";
+    document.getElementById("s1Date").value = s.s1Date || "";
+    document.getElementById("s1Cond").value = s.s1Cond || "BB";
+    document.getElementById("s2Date").value = s.s2Date || "";
+    document.getElementById("s2Cond").value = s.s2Cond || "SH";
+    document.getElementById("subjNotes").value = s.notes || "";
+    selectedSwatchColor = s.color || PALETTE[0];
+    const delBtn = document.getElementById("btnDeleteSubject");
+    delBtn.style.display = "inline-flex";
+    delBtn.onclick = () => {
+      if (confirm(`Eliminare ${s.name}?`)) {
+        subjects = subjects.filter((x) => x.id !== id);
+        if (selectedSubjectFilter === id) selectedSubjectFilter = null;
+        saveAll();
+        closeModal("subjectModal");
+        renderAll();
+      }
+    };
+    renderSwatches();
+    openModal("subjectModal");
+  }
+
+  document.getElementById("subjectForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const editId = document.getElementById("editSubjectId").value;
+    const payload = {
+      id: editId || "subj_" + Date.now(),
+      code: document.getElementById("subjCode").value.trim(),
+      name: document.getElementById("subjName").value.trim(),
+      phone: document.getElementById("subjPhone").value.trim(),
+      s1Date: document.getElementById("s1Date").value,
+      s1Cond: document.getElementById("s1Cond").value,
+      s2Date: document.getElementById("s2Date").value,
+      s2Cond: document.getElementById("s2Cond").value,
+      color: selectedSwatchColor,
+      notes: document.getElementById("subjNotes").value.trim()
+    };
+
+    if (editId) {
+      subjects = subjects.map((s) => (s.id === editId ? payload : s));
+    } else {
+      subjects.push(payload);
+    }
+    saveAll();
+    closeModal("subjectModal");
+    renderAll();
+  });
+
+  // All Subjects Modal
+  function openAllSubjectsModal() {
+    const list = document.getElementById("allSubjectsList");
+    if (subjects.length === 0) {
+      list.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nessun soggetto reclutato al momento. Clicca su <strong>+ Nuovo Soggetto</strong> per iniziare.</p>`;
+    } else {
+      list.innerHTML = "";
+      subjects.forEach((s) => {
+        const done = isSubjectCompleted(s);
+        const { done: dCount, total: tCount } = getSubjectCompletion(s);
+        const item = document.createElement("div");
+        item.className = "all-subj-item";
+        item.style.borderLeftColor = s.color;
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div>
+              <strong>${escapeHtml(s.code ? s.code + " · " : "")}${escapeHtml(s.name)}</strong>
+              ${s.phone ? `<span style="font-size:12.5px; color:var(--text-muted); margin-left:8px;">📱 ${escapeHtml(s.phone)}</span>` : ""}
+            </div>
+            <span class="status-pill ${done ? "status-done" : "status-active"}">${done ? "✓ Già fatto" : `In corso (${dCount}/${tCount})`}</span>
+          </div>
+          <div style="font-size:12.5px; color:var(--text-muted); margin-top:6px;">
+            S1: <strong>${formatItShort(s.s1Date)}</strong> (${s.s1Cond}) &nbsp;·&nbsp; S2: <strong>${formatItShort(s.s2Date)}</strong> (${s.s2Cond})
+          </div>
+          ${s.notes ? `<div style="font-size:12.5px; margin-top:6px; background:#f8f8fa; padding:6px 8px; border-radius:6px;">📝 ${escapeHtml(s.notes)}</div>` : ""}
+          <div style="display:flex; gap:8px; margin-top:9px;">
+            <button class="btn btn-sm" onclick="selectedSubjectFilter='${s.id}'; closeModal('allSubjectsModal'); renderAll();">Filtra sul calendario</button>
+            <button class="btn btn-sm" onclick="closeModal('allSubjectsModal'); openEditSubject('${s.id}');">Modifica</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+    openModal("allSubjectsModal");
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add("open"); }
+  function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  document.getElementById("btnPrevMonth").addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+    renderCalendar();
+  });
+  document.getElementById("btnNextMonth").addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+    renderCalendar();
+  });
+  document.getElementById("btnToday").addEventListener("click", () => {
+    currentMonthDate = new Date();
+    currentMonthDate.setDate(1);
+    renderCalendar();
+  });
+
+  function renderAll() {
+    renderSubjectsStrip();
+    renderCalendar();
+  }
+
+  initEditableHeader();
+  initFilesDropdown();
+  renderAll();
+</script>
+</body>
+</html>
